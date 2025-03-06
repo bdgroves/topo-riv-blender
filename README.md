@@ -220,7 +220,17 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 
 <div align="center">
     <img src="images/render_mtfuji.png" alt="render custom example of the mt. fuji" width="100%">
-    <p> <b>Figure 11</b>: <em>Example custom render of the Mt. Fuji.</em></p>
+    <p> <b>Figure 11</b>: <em>Example custom render of Mt. Fuji.</em></p>
+</div>
+
+#### Can I add more than one layer/surface?
+- Topography is one just one surface, but what if there is another layer/surface that you would like to render (e.g., ice, water)? Below is an example where, we add a flat surface to represent the water surface on Lake Baikal located in Siberia, Russia.
+- OpenTopgraphy gives you access to the global dataset, Global Bathymetry SRTM15+ V2.1 500m, which contains bathymetry.
+- You can create this render with `snakemake --cores 1 -s Snakefile_lake`.
+
+<div align="center">
+    <img src="images/render_lakebaikal.png" alt="render custom example of lake baikal" width="50%">
+    <p> <b>Figure 12</b>: <em>Example custom render of Lake Baikal.</em></p>
 </div>
 
 #### How do I iterate and improve your renders efficiently?
@@ -235,21 +245,21 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 
 <div align="center">
     <img src="images/blender_ui.png" alt="adjusting the exaggeration in realtime" width="100%">
-    <p> <b>Figure 12</b>: <em>The Blender GUI. (A) The 3D viewport of the camera. (B) Use these options to view a non-rendered view (left) or a rendered view (right). (C) The scene collection containing the different objects and the camera. (D) The properties of the scene. Screenshot shows the properties for the location, rotation, and scale of the topography.</em></p>
+    <p> <b>Figure 13</b>: <em>The Blender GUI. (A) The 3D viewport of the camera. (B) Use these options to view a non-rendered view (left) or a rendered view (right). (C) The scene collection containing the different objects and the camera. (D) The properties of the scene. Screenshot shows the properties for the location, rotation, and scale of the topography.</em></p>
 </div>
 
 - In the Blender properties (D), you can adjust the location, rotation, and scale of the topography, adjust the camera settings and orientation, modify the lighting of the scene, and more. Use the `Material Preview` mode (B) when adjusting the geometric properties. The changes that you make will instantly show in the 3D viewport (A). 
 
 <div align="center">
     <img src="images/exagg_mod.gif" alt="adjusting the exaggeration in realtime" width="50%">
-    <p> <b>Figure 13</b>: <em>Adjusting the scale of the topography with the Blender GUI.</em></p>
+    <p> <b>Figure 14</b>: <em>Adjusting the scale of the topography with the Blender GUI.</em></p>
 </div>
 
 - The GIF above does not look nearly as pretty as the final rendered image [Figure 10]. That's because the scene has not been rendered. To see a preview of what the render may look like, select the `Rendered` mode (B). Adjusting the lighting with the Blender GUI requires you to wait a few seconds for to re-render the scene. The image becomes fuzzy because there a too few samples to render the whole image. Over time, with more samples, the render becomes clearer.
 
 <div align="center">
     <img src="images/light_mod.gif" alt="adjusting the lighting in realtime" width="50%">
-    <p> <b>Figure 14</b>: <em>Adjusting the lighting with the Blender GUI.</em></p>
+    <p> <b>Figure 15</b>: <em>Adjusting the lighting with the Blender GUI.</em></p>
 </div>
 
 - Make sure to take note of the adjustments that you made and record them in the parameters `.py` files in the `blender_parameters` folder. Replace the `-b` in the `Snakefile` and use the pipeline to re-render the scene to get you updated image. You can either delete the rendered image to get the pipeline to re-render or force it to create it. For the contoured image of the Columbia River, you would need to run the following command: `snakemake --cores 1 -s Snakefile_contour phase_2_visualize/out/render_columbiariver.png --force`.

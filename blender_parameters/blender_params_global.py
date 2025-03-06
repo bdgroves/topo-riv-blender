@@ -7,12 +7,12 @@ dem_product = "auto"  # determine automatically
 buffer = 0.2  # buffer space around watershed
 
 ########## map visualization ##########
-background_color = [0.5, 0.5, 0.5, 1.0]
+background_color = [0.1, 0.1, 0.1, 1.0]
 wall_color = [0.2, 0.133, 0.0667, 1.0]
 
 # topography colormap
 topo_cmap = "custom"
-topo_cstops = [[12, 32, 12], [44, 29, 14], [200, 200, 200]]
+topo_cstops = [[21, 32, 21], [44, 35, 28], [200, 200, 200]]
 topo_nstops = [0, 200, 256]
 
 ########## Label Parameters ##########

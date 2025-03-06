@@ -204,11 +204,11 @@ def setup_blender_data(
 
         # Move ocean floor down and mountains up
         proj_dem_bath = proj_dem
-        proj_dem_bath[proj_dem <= 0.0] -= type(proj_dem_bath[0,0])(overlap_prevention * (max_dem - min_dem))
-        proj_dem_bath[proj_dem > 0.0] += type(proj_dem_bath[0,0])(overlap_prevention * (max_dem - min_dem))
+        proj_dem_bath[proj_dem <= ocean_elevation] -= type(proj_dem_bath[0,0])(overlap_prevention * (max_dem - min_dem))
+        proj_dem_bath[proj_dem > ocean_elevation] += type(proj_dem_bath[0,0])(overlap_prevention * (max_dem - min_dem))
 
         # Determine how much proportion of the relief is above ground
-        proportion_above_ground = max_dem / (max_dem - min_dem)
+        proportion_above_ground = (max_dem - ocean_elevation) / (max_dem - min_dem)
 
         # 8 bit portion below water
         cmap1_length = 256 - int(round(proportion_above_ground * 256))
