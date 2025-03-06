@@ -1,0 +1,19 @@
+digraph snakemake_dag {
+    graph[bgcolor=white, margin=0];
+    node[shape=box, style=rounded, fontname=sans, fontsize=11.5, penwidth=2];
+    edge[penwidth=2, color=grey];
+	0[label = "render", color = "#d62728", style="rounded"];
+	1[label = "create_height_texture_map", color = "#bcbd22", style="rounded"];
+	2[label = "get_wbd\nhuc_id: 02050302", color = "#87CEFA", style="rounded"];
+	3[label = "download_dem\nUSGS30m", color = "#007250", style="rounded"];
+	4[label = "get_nhd\nflowlines", color = "#4169E1", style="rounded"];
+	5[label = "get_nhd\nwaterbodies", color = "#0000CD", style="rounded"];
+	1 -> 0
+	2 -> 1
+	3 -> 1
+	4 -> 1
+	5 -> 1
+	2 -> 3
+	2 -> 4
+	2 -> 5
+}            

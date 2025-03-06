@@ -1,0 +1,19 @@
+name: topo-riv-blender
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12.9
+  - pip=25.0.1
+  - snakemake=8.29.2
+  - pandas=2.2.3
+  - numpy=2.2.3
+  - matplotlib=3.9.4
+  - gdal=3.10.2
+  - geopandas=1.0.1
+  - astropy=7.0.1
+  - pynhd=0.19.0
+  - pygeohydro=0.19.0
+  - utm=0.7.0
+  - pip:
+    - git+https://github.com/jeffskwang/bmi-topography-usgs.git
