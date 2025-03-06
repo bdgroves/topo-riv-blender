@@ -2,7 +2,7 @@
   {
     "name": "TopoRivBlender",
     "organization": "U.S. Geological Survey",
-    "description": "A Python Code Pipeline for fetching topographic and hydrographic data and creating 3-dimensional visualizations. Visualizations are rendered using Blender, a free, open-source computer graphics software.",
+    "description": "A Python code pipeline for fetching topographic and hydrographic data and creating 3-dimensional visualizations. Visualizations are rendered using Blender, a free, open-source computer graphics software.",
     "version": "1.0.0",
     "status": "Release Candidate",
 
@@ -25,8 +25,15 @@
     "laborHours": 0,
 
     "tags": [
-      "TOPIC_TAG_1",
-      "TOPIC_TAG_2"
+      "USGS",
+      "python",
+      "water",
+      "topography",
+      "hydrography",
+      "snakemake",
+      "blender",
+      "visualization",
+      "3d"
     ],
 
     "languages": [
@@ -34,8 +41,8 @@
     ],
 
     "contact": {
-      "name": "REPOSITORY_ADMINISTRATOR_NAME",
-      "email": "REPOSITORY_ADMINISTRATOR_EMAIL"
+      "name": "Jeffrey S. Kwang",
+      "email": "jkwang@usgs.gov"
     },
 
     "date": {
