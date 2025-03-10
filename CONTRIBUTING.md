@@ -21,7 +21,7 @@ Steps to set yourself up to contribute to the repository:
 - [ ] Log in to your GitLab account using single sign-on
 - [ ] [Configure your SSH key with GitLab](https://docs.gitlab.com/ee/user/ssh.html)
 - [ ] Fork the repository to your GitLab workspace
-- [ ] Clone your fork of the repository to your local folder of choice using the SSH URL and the following commands in a terminal or command line:`git clone git@code.usgs.gov:[your user name]/pesticides.git'
+- [ ] Clone your fork of the repository to your local folder of choice using the SSH URL and the following commands in a terminal or command line:`git clone git@code.usgs.gov:[your user name]/topo-riv-blender.git' 
 - [ ] Navigate to the new repository folder and launch the .Rproj file to open an RStudio session
 - [ ] In the RStudio terminal, check the branch you are currently in by entering: `git branch` If you are not in the `main` repository, enter: `git switch main`
 - [ ] From the `main` branch in the repository, create a new branch for your changes (change the text [new branch name] to a simple descriptor of your contributions): `git checkout -b [new branch name]`
@@ -51,7 +51,7 @@ Basic steps (all on GitLab):
 - [ ] Navigate to your remote forked repository and click on the menu item Merge Requests.
 - [ ] Create a merge request between your remote forked repository branch and the canonical (upstream) main branch
 - [ ] Write a clear, concise description of the purpose of your pull request. Please be more specific than "bug fix" or "add feature". What does the code do? Why is it important? Give your audience something to work off of when they begin reviewing your commits and code
-- [ ] Select a reviewer (most likely Margaux Sleckman or Elise Hinman) to review your merge request
+- [ ] Select a reviewer (most likely Jeffrey Kwang) to review your merge request
 - [ ] Maintain your discussion with your reviewer(s) in the merge request through messages below the initial merge request description. This makes it easier to dig up logic/discussions if questions come up later about the change.
 - [ ] Once the reviewer approves your changes, merge your commits into the canonical main and repeat! Nicely done. 
 
