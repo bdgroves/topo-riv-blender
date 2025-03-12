@@ -1,8 +1,28 @@
+![](USGS_ID_black.png)
+
 # TopoRivBlender
+
+*A data pipeline for fetching, processing, and visualizing topographic and hydrographic data*
+
+**Authors**: Jeffrey Kwang, Anthony Martinez, Wallace (Andy) Mcaliley, and Cee Nell
+
+**Point of contact**: Jeffrey Kwang ([jkwang\@usgs.gov](mailto:jkwang@usgs.gov){.email})
+
+**Repository Type**: `python` script
+
+**Year of Origin**: 2025 (original publication)
+
+**Year of Version**: 2025
+
+**Digital Object Identifier (DOI)**: <#####>
+
+**USGS Information Product Data System (IPDS) no.**: IP-##### (internal agency tracking)
+
+------------------------------------------------------------------------
 
 ## Introduction
 
-TopoRivBlender is a python pipeline for creating of 3D visualizations with realistic lighting (see below). It aims to streamline two common bottlenecks:
+TopoRivBlender is a `python` pipeline for creating of 3D visualizations with realistic lighting (see below). It aims to streamline two common bottlenecks:
 
 1. The retrieval and processing of [topographic](https://www.usgs.gov/faqs/what-a-digital-elevation-model-dem) and [hydrographic](https://www.usgs.gov/faqs/what-national-hydrography-dataset-nhd#:~:text=The%20National%20Hydrography%20Dataset%20(NHD)%20is%20a%20digital%20vector%20dataset,%2C%20streams%2C%20rivers%2C%20canals%2C)
 2. Creation of the 3D render in [Blender](https://www.blender.org/download/), an free, open source 3D visualization program.
