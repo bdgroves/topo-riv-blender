@@ -1,0 +1,95 @@
+# Render Parameters File
+module_name = "blender_parameters.blender_params_global"
+
+# Import parameters file
+import os, sys, importlib
+render_params = module_name.replace(".", os.sep) + ".py"
+parameters = importlib.import_module(module_name)
+
+# Define the final output
+rule all:
+    input:
+        "phase_2_visualize/out/render_mtfuji.png",
+        "fonts/" + parameters.label_font.replace(" ", "_") + ".ttf"
+
+# Download Google Font
+rule download_font:
+    params:
+        label_font = parameters.label_font
+    output:
+        "fonts/" + parameters.label_font.replace(" ", "_") + ".ttf"
+    script:
+        "phase_0_fetch/src/download_font.py"
+
+# Creates a multipoint shapefile for labeling
+rule create_shapefile:
+    params:
+        coords = [[35.3606, 138.7274],[35.3438, 138.7522]],
+        labels = ["Mt. Fuji", "Mount Hōei"],
+        pin_colors = [[1.0,0.0,0.0,1.0],[0.0,0.0,1.0,1.0]],
+        label_colors = [[1.0,1.0,1.0,1.0],[1.0,1.0,1.0,1.0]],
+        crs = "EPSG:4326"
+    output:
+        shpfile = "phase_0_fetch/out/{name}/labels.shp"
+    script:
+        "phase_0_fetch/src/make_shpfile.py"
+
+
+# Downloads a digital elevation model within bounding box
+rule download_dem:
+    params:
+        data_product = parameters.data_product,
+        dem_product = parameters.dem_product,
+        UL_corner = [35.44522175270668, 138.6206067267965],
+        LR_corner = [35.273577447392256, 138.86512067423828],
+        render_pixels = parameters.res_x * parameters.res_y,
+        buffer = parameters.buffer
+    output:
+        demfile = "phase_0_fetch/out/{name}/dem.tif",
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    script:
+        "phase_0_fetch/src/download_dem_bounding_box.py"
+
+# Creates a grayscale height map and texture map for Blender to render.
+# The height map is used to determine how high the landscape should be 
+# in the render, and the texture map determines the color of the landscape.
+rule create_heightmap_texturemap:
+    params:
+        map_crs = "EPSG:3857",
+        buffer = parameters.buffer,
+        topo_cmap = parameters.topo_cmap,
+        topo_cstops = parameters.topo_cstops,
+        topo_nstops = parameters.topo_nstops,
+        background_color = parameters.background_color,
+        wall_color = parameters.wall_color
+    input:
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp",
+        demfile =  "phase_0_fetch/out/{name}/dem.tif",
+        labels_shpfile = "phase_0_fetch/out/{name}/labels.shp"
+    output:
+        dimensions_file = "phase_1_process/out/{name}/dimensions.npy",
+        heightmap_file = "phase_1_process/out/{name}/heightmap.png",
+        texturemap_file = "phase_1_process/out/{name}/texturemap.png",
+        apronmap_file = "phase_1_process/out/{name}/apronmap.png",
+        labels_file = "phase_1_process/out/{name}/labels.csv"
+    script:
+        "phase_1_process/src/process.py"
+
+# Using the height map and texture map, Blender sets up the scene 
+# (topography, lighting, and camera) and renders a photorealistic image.
+rule render:
+    input:
+        dimensions_file = "phase_1_process/out/{name}/dimensions.npy",
+        heightmap_file = "phase_1_process/out/{name}/heightmap.png",
+        texturemap_file = "phase_1_process/out/{name}/texturemap.png",
+        apronmap_file = "phase_1_process/out/{name}/apronmap.png",
+        labels_file = "phase_1_process/out/{name}/labels.csv",
+        blender_params = render_params,
+        label_fontfile = "fonts/" + parameters.label_font.replace(" ", "_") + ".ttf"
+    output:
+        output_file = "phase_2_visualize/out/render_{name}.png"
+    shell:
+        "Blender -b -P phase_2_visualize/src/render.py -- "
+        "{input.blender_params} "
+        "{input.dimensions_file} {input.heightmap_file} {input.texturemap_file} {input.apronmap_file} {input.labels_file} "
+        "{output.output_file} "

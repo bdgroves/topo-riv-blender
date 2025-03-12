@@ -1,0 +1,18 @@
+# Files and directories ----- Note out folders will be made automatically
+*/out/*
+*/tmp/*
+*/in/*
+
+# Python files -----
+.snakemake
+*/src/__pycache__
+*/__pycache__
+
+# Cache folder -----
+cache
+
+# font folder
+fonts
+
+#API KEY ----- DO NOT REMOVE
+opentopography_api_key.txt
