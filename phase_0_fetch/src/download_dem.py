@@ -32,7 +32,7 @@ def snakemake_type_exists(snakemake_type, string, default_input):
 
 
 def get_shapefile_extent(shapefile):
-    """Gets a extent coodinates and the height + length according to a shapefile
+    """Gets the bounding box coordinates, height and length of the shapefile
 
     Parameters
     ----------
@@ -42,15 +42,15 @@ def get_shapefile_extent(shapefile):
     Returns
     -------
     west: float
-        west long coordinate
+        west (longitude) coordinate
     east: float
-        east long coordinate
+        east (longitude) coordinate
     length: float
         length of the total extent
     south: float
-        south lat coordinate
+        south (latitude) coordinate
     north: float
-        north lat coordinate
+        north (latitude) coordinate
     height: float
         height of the total extent
 
@@ -69,20 +69,21 @@ def get_shapefile_extent(shapefile):
 
 
 def buffer_shapefile(west, east, length, south, north, height, buffer):
-    """Gets a new extent coordinates according to a buffer
+    """Gets the extended bounding box coordinates, height, and
+    length after a adding a buffer to an input bounding box
 
     Parameters
     ----------
     west: float
-        west long coordinate
+        west (longitude) coordinate
     east: float
-        east long coordinate
+        east (longitude) coordinate
     length: float
         length of the total extent
     south: float
-        south lat coordinate
+        south (latitude) coordinate
     north: float
-        north lat coordinate
+        north (latitude) coordinate
     height: float
         height of the total extent
     buffer: float
@@ -91,13 +92,13 @@ def buffer_shapefile(west, east, length, south, north, height, buffer):
     Returns
     -------
     west: float
-        west long coordinate with buffer
+        west (longitude) coordinate with buffer
     east: float
-        east long coordinate with buffer
+        east (longitude) coordinate with buffer
     south: float
-        south lat coordinate with buffer
+        south (latitude) coordinate with buffer
     north: float
-        north lat coordinate with buffer
+        north (latitude) coordinate with buffer
 
     """
 
@@ -116,13 +117,13 @@ def estimate_area(west, east, south, north, render_pixels):
     Parameters
     ----------
     west: float
-        west long coordinate
+        west (longitude) coordinate
     east: float
-        east long coordinate
+        east (longitude) coordinate
     south: float
-        south lat coordinate
+        south (latitude) coordinate
     north: float
-        north lat coordinate
+        north (latitude) coordinate
     render_pixels: int
         number of pixels in the final render image, used to determine the dem resolution
 
@@ -160,13 +161,13 @@ def determine_dem_product(
     dem_product: string
         initial name of the dem product used by the opentopography api
     west: float
-        west long coordinate
+        west (longitude) coordinate
     east: float
-        east long coordinate
+        east (longitude) coordinate
     south: float
-        south lat coordinate
+        south (latitude) coordinate
     north: float
-        north lat coordinate
+        north (latitude) coordinate
     render_pixels: int
         number of pixels in the final render image, used to determine the dem resolution
 
