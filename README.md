@@ -253,7 +253,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
     <p> <b>Figure 12</b>: <em>Example custom render of Lake Baikal.</em></p>
 </div>
 
-#### How do I iterate and improve your renders efficiently?
+#### How do I iterate and improve my renders efficiently?
 - Let's say you used the pipeline to fetch all the data and processed the height and texture map. You rendered the data in Blender, but you don't like the way the topography looks. Maybe you want to have the lighting from a different angle. You could change the settings and then re-render the scene, but that could take a few minutes to re-render. A faster way to tweak these sorts of settings is to use the Blender GUI. By default, the `Snakefile` uses Blender with the background flag `-b`, which uses the Blender without the GUI. Remove the the `-b` flag, and your shell command in the `Snakefile` should look like this:
 ```python
     "Blender -P phase_2_visualize/src/render.py -- "
