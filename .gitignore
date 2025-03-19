@@ -2,6 +2,7 @@
 */out/*
 */tmp/*
 */in/*
+**/.DS_Store
 
 # Python files -----
 .snakemake
