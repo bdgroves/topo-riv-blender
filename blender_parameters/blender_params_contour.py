@@ -51,7 +51,7 @@ camera_distance = (
 camera_tilt = (
     30.0  # degrees from horizontal: 0.0 is profile view, 90.0 is planform view
 )
-camera_rotation = 180.0  # camera location degrees CW from North: 0.0 is North, 90.0 is East, 180.0, is South, and 270.0 is West.
+camera_rotation = 180.0  # camera location degrees clockwise from North: 0.0 is North, 90.0 is East, 180.0, is South, and 270.0 is West.
 
 # depth of field
 use_depth_of_field = True
@@ -60,7 +60,7 @@ f_stop = 100.0  # affects depths of field, lower for a shallow dof, higher for w
 
 ########## sun properties ##########
 sun_tilt = 45.0  # degrees from horizontal
-sun_rotation = 0.0  # degrees CW from North
+sun_rotation = 0.0  # degrees clockwise from North
 sun_intensity = 0.5  # sun intensity
 sun_strength = 1.0  # sun strength
 

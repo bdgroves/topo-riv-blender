@@ -48,7 +48,7 @@ camera_distance = (
 camera_tilt = (
     45.0  # degrees from horizontal: 0.0 is profile view, 90.0 is planform view
 )
-camera_rotation = 180.0  # camera location degrees CW from North: 0.0 is North, 90.0 is East, 180.0, is South, and 270.0 is West.
+camera_rotation = 180.0  # camera location degrees clockwise from North: 0.0 is North, 90.0 is East, 180.0, is South, and 270.0 is West.
 shift_x = 0.0  # you may need to shift the camera to center the topo in the frame
 shift_y = 0.0  # you may need to shift the camera to center the topo in the frame
 
@@ -59,7 +59,7 @@ f_stop = 100.0  # affects depths of field, lower for a shallow dof, higher for w
 
 ########## sun properties ##########
 sun_tilt = 20.0  # degrees from horizontal
-sun_rotation = 315.0  # degrees CW from North
+sun_rotation = 315.0  # degrees clockwise from North
 sun_intensity = 0.5  # sun intensity
 sun_strength = 1.0  # sun strength
 
