@@ -11,7 +11,7 @@ from astropy.convolution import Gaussian2DKernel, convolve
 from phase_0_fetch.src.download_dem import get_shapefile_extent
 
 def get_raster_extent(dataset):
-    """Gets a extent coodinates of the raster image
+    """Gets extent coodinates of the raster image
 
     Parameters
     ----------
@@ -45,7 +45,7 @@ def get_raster_extent(dataset):
 
 def clean_border(ax, west, east, south, north, edgecolor, linewidth, crs):
     """Adds a black line around the extent to remove anomalous values from edge. 
-    Beacuse matplotlib saves the texture and height maps are images, the data 
+    Because matplotlib saves the texture and height maps as images, the data 
     shape and image pixel shape may not fully line up. This causes there to be a 
     white line on the border of the images. This function cleans that up.
 
@@ -160,7 +160,7 @@ def project(file, map_crs, tmp_dir):
     file: string
         path of geotiff
     map_crs: string
-        coordiante reference system to use for the maps
+        coordinate reference system to use for the maps
     tmp_dir: string
         path of the tmp directory
 
@@ -216,7 +216,7 @@ def contour(ds, dem, coarsen, stddev):
     Parameters
     ----------
     ds: gdal dataset
-        gdal datset holding the dem
+        gdal dataset holding the dem
     dem: numpy array
         dem values in numpy array
     coarsen: float
@@ -237,7 +237,7 @@ def contour(ds, dem, coarsen, stddev):
     # Make a spatial grid for the raster
     rast_x = np.linspace(rast_extent[0], rast_extent[1], dem.shape[1])
     rast_y = np.linspace(rast_extent[3], rast_extent[2], dem.shape[0])
-    rast_Y, rast_X = np.meshgrid(rast_y, rast_x, indexing="ij")
+    #rast_Y, rast_X = np.meshgrid(rast_y, rast_x, indexing="ij") # do you need this?
 
     # Initialize the interpolator
     interpol = RegularGridInterpolator((rast_y, rast_x), dem, method="linear")
