@@ -375,7 +375,7 @@ def get_v_scale(exaggeration, x_length, y_length, relief):
 
     """
     # auto calculation of exaggeration
-    if params.exaggeration == "auto":
+    if exaggeration == "auto":
         R = relief / np.sqrt(x_length * y_length)
         return (
             (1.0 + 4.0 * np.exp(-200.0 * R))
@@ -385,7 +385,7 @@ def get_v_scale(exaggeration, x_length, y_length, relief):
         )
     else:
         return (
-            params.exaggeration * params.plane_size * relief / max(x_length, y_length)
+            exaggeration * params.plane_size * relief / max(x_length, y_length)
         )
 
 
