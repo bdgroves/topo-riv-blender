@@ -289,7 +289,7 @@ def setup_layer(layer, dimensions_file, data_folder):
     layer_mat.node_tree.nodes["Material Output"].location = (300, 0)
 
 
-def make_platform(loc, platform_size_x, platform_size_y, arpon_file, name):
+def make_platform(loc, platform_size_x, platform_size_y, apron_file, name):
     """Sets up the platform node in blender
 
     Parameters
@@ -300,7 +300,7 @@ def make_platform(loc, platform_size_x, platform_size_y, arpon_file, name):
         x-width of platform
     platform_size_y: float
         y-width of platform
-    arpon_file: string
+    apron_file: string
         path to apron file containing the texture map (i.e., color of the background)
     name:
         name of the platform node
@@ -312,7 +312,7 @@ def make_platform(loc, platform_size_x, platform_size_y, arpon_file, name):
     """
 
     # load apron map
-    color_image = bpy.data.images.load(parent + "/" + arpon_file)
+    color_image = bpy.data.images.load(parent + "/" + apron_file)
 
     # set platform
     platform_mesh = bpy.ops.mesh.primitive_plane_add(size=params.plane_size)
