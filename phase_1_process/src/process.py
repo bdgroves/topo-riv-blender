@@ -27,7 +27,7 @@ from phase_1_process.src.process_functions import (
 def setup_blender_data(
     map_crs,
     demfile,
-    aerialfile,
+    aerialfiles,
     layerfiles,
     extent_shpfile,
     waterbody_shpfile,
