@@ -52,7 +52,7 @@ bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.delete(use_global=False)
 
 ################################################################################
-# This sets the render enginer to CYCLES.
+# This sets the render engine to CYCLES.
 # In order for TopoBlender to render your topography correctly, you must use
 # this render engine. This engine is optimized for GPUs, so if your computer
 # lacks a GPU, TopoBlender may be slow.

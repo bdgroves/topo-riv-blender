@@ -470,7 +470,7 @@ def sample_texture_at_coords(displacement_image, width, height, norm_x, norm_y):
 def add_pin(
     norm_x, norm_y, dimensions_file, displacement_file, label, pin_color, label_color
 ):
-    """Adds the pin and label to the blende scene
+    """Adds the pin and label to the blender scene
 
     Parameters
     ----------
@@ -626,7 +626,7 @@ def add_pin(
     except:
         print("using default font")
 
-    # add matetial
+    # add material
     setmaterial.inputs["Material"].default_value = label_mat
 
     # connect nodes
