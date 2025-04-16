@@ -3,7 +3,7 @@
     "name": "TopoRivBlender",
     "organization": "U.S. Geological Survey",
     "description": "A Python code pipeline for fetching topographic and hydrographic data and creating 3-dimensional visualizations. Visualizations are rendered using Blender, a free, open-source computer graphics software.",
-    "version": "v1.0.0",
+    "version": "1.0.0",
     "status": "Release Candidate",
 
     "permissions": {
