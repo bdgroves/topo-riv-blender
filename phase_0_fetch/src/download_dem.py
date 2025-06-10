@@ -135,7 +135,7 @@ def estimate_area(west, east, south, north, render_pixels):
     """
 
     # Radius of the Earth in kilometers
-    R = 6371.0  
+    R = 6371.0
 
     # Convert degrees to kilometers, y-distance
     height_km = (north - south) * (R * (np.pi / 180.0))
@@ -157,9 +157,9 @@ def determine_dem_product(
     Parameters
     ----------
     data_product: string
-        initial name of the data product used by the opentopography api
+        name of the data product used by the opentopography api
     dem_product: string
-        initial name of the dem product used by the opentopography api
+        name of the dem product used by the opentopography api
     west: float
         west (longitude) coordinate
     east: float
@@ -202,7 +202,7 @@ def determine_dem_product(
             if area_m_per_pixel < 900.0:
                 return "/API/usgsdem", "USGS10m"
 
-            # 3DEP 30m    
+            # 3DEP 30m
             elif 900.0 <= area_m_per_pixel and area_m_per_pixel < 8100.0:
                 return "/API/usgsdem", "USGS30m"
 
@@ -211,7 +211,7 @@ def determine_dem_product(
                 print(
                     "This is a pretty large area, consider using data_product = '/API/globaldem' instead of '/API/usgsdem' next time. Switching to '/API/globaldem' for now."
                 )
-                switch_to_global = True 
+                switch_to_global = True
 
         # Determine global dem product if globaldem is chosen or switched to
         if data_product == "/API/globaldem" or switch_to_global == True:
@@ -232,7 +232,7 @@ def determine_dem_product(
             else:
                 print("You're using the coarsest DEM, this might be a lot of data.")
                 return "/API/globaldem", "GEDI_L3"
-    
+
     # Return user-specified parameters
     else:
         return data_product, dem_product
@@ -275,7 +275,7 @@ def opentopography_api_download(params, demfile):
     # First try to download the DEM with the basic parameters
     try:
         topo_request.fetch()
-        
+
         # Rename the file
         os.rename(
             out_dir
@@ -295,10 +295,10 @@ def opentopography_api_download(params, demfile):
 
     # If you request a DEM that is too large, you'll need to download the dems in strips and then merge them.
     except requests.exceptions.HTTPError as e:
-        
+
         # If the error is status code 400, figure out how large the initial request was and the maximum requested area
         if e.response.status_code == 400:
-            print ("DEM is too large for one request, we have to download it in strips.")
+            print("DEM is too large for one request, we have to download it in strips.")
 
             err = e.response.text
 
@@ -328,10 +328,10 @@ def opentopography_api_download(params, demfile):
             # Get initial request parameters
             data_product = params["data_type"]
             dem_product = params["dem_type"]
-            buff_west =  params["west"]
-            buff_south =  params["south"]
-            buff_east =  params["east"] 
-            buff_north =  params["north"]       
+            buff_west = params["west"]
+            buff_south = params["south"]
+            buff_east = params["east"]
+            buff_north = params["north"]
 
             # Calculate the number of strips needed to keep the area request under the max area
             strips = int(total_area / max_area) + 1
@@ -357,7 +357,7 @@ def opentopography_api_download(params, demfile):
 
                 # Only redownload if the strip doesn't exist. When dealing with large datasets this prevents the code from
                 # redownloading already retrieved data. However, this may cause issues if you download a huge dem and only
-                # change the extent slightly. 
+                # change the extent slightly.
                 if os.path.isfile(tmp_dir + "/dem_part_" + str(i) + ".tif") == False:
 
                     # Get Default parameter set from BMI-Topography
@@ -406,12 +406,12 @@ def opentopography_api_download(params, demfile):
                         tmp_dir + "/dem_part_" + str(i) + ".tif",
                     )
 
-                # Add path to dem strip path list    
+                # Add path to dem strip path list
                 dem_strips += [tmp_dir + "/dem_part_" + str(i) + ".tif"]
 
             # Use GDAL to open the first dem strip
             srs = gdal.Open(tmp_dir + "/dem_part_0.tif")
-            
+
             # Get the NaN value
             no_data_val = srs.GetRasterBand(1).GetNoDataValue()
 
@@ -507,7 +507,7 @@ if __name__ == "__main__":
     )
     dem_product = snakemake_type_exists(snakemake.params, "dem_product", "NASADEM")
     render_pixels = snakemake_type_exists(snakemake.params, "render_pixels", 1)
-    buffer =snakemake_type_exists(snakemake.params, "buffer", 1.0)
+    buffer = snakemake_type_exists(snakemake.params, "buffer", 1.0)
     extent_shpfile = snakemake.input["extent_shpfile"]
     demfile = snakemake.output["demfile"]
 
