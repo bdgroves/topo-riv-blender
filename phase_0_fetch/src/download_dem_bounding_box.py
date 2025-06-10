@@ -5,11 +5,12 @@ from shapely.geometry import Polygon
 
 from phase_0_fetch.src.download_dem import (
     snakemake_type_exists,
-    buffer_shapefile, 
+    buffer_shapefile,
     opentopography_api_download,
     determine_dem_product,
     estimate_area,
 )
+
 
 def bmi_download_dem_bbox(
     UL_corner,
@@ -18,7 +19,7 @@ def bmi_download_dem_bbox(
     demfile,
     data_product,
     dem_product,
-    buffer, 
+    buffer,
     render_pixels,
 ):
     """Downloads a DEM (.tif) according to a bounding box and makes a shapefile of the extent of the bbox.
@@ -50,8 +51,13 @@ def bmi_download_dem_bbox(
 
     # Buffer those boundaries (expand) using a user-defined buffering percentage
     buff_west, buff_east, buff_south, buff_north = buffer_shapefile(
-        float(UL_corner[1]), float(LR_corner[1]), float(LR_corner[1]) - float(UL_corner[1]),
-        float(LR_corner[0]), float(UL_corner[0]), float(UL_corner[0]) - float(LR_corner[0]), buffer
+        float(UL_corner[1]),
+        float(LR_corner[1]),
+        float(LR_corner[1]) - float(UL_corner[1]),
+        float(LR_corner[0]),
+        float(UL_corner[0]),
+        float(UL_corner[0]) - float(LR_corner[0]),
+        buffer,
     )
 
     # Determine the correct data and dem product if set to Auto-Mode
@@ -82,8 +88,8 @@ def bmi_download_dem_bbox(
     # Create a polygon from the bounding box
     domain_geom = Polygon(
         zip(
-            [UL_corner[1], UL_corner[1], LR_corner[1], LR_corner[1]],
-            [UL_corner[0], LR_corner[0], LR_corner[0], UL_corner[0]],
+            [UL_corner[1], UL_corner[1], LR_corner[1], LR_corner[1], UL_corner[1]],
+            [UL_corner[0], LR_corner[0], LR_corner[0], UL_corner[0], UL_corner[0]],
         )
     )
 
@@ -105,7 +111,7 @@ if __name__ == "__main__":
     )
     dem_product = snakemake_type_exists(snakemake.params, "dem_product", "NASADEM")
     render_pixels = snakemake_type_exists(snakemake.params, "render_pixels", 1)
-    buffer =snakemake_type_exists(snakemake.params, "buffer", 1.0)
+    buffer = snakemake_type_exists(snakemake.params, "buffer", 1.0)
     UL_corner = snakemake.params["UL_corner"]
     LR_corner = snakemake.params["LR_corner"]
     extent_shpfile = snakemake.output["extent_shpfile"]

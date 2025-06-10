@@ -82,8 +82,8 @@ def clean_border(ax, west, east, south, north, edgecolor, linewidth, crs):
         geometry=[
             Polygon(
                 zip(
-                    [west, west, east, east],
-                    [north, south, south, north],
+                    [west, west, east, east, west],
+                    [north, south, south, north, north],
                 )
             )
         ],
@@ -91,7 +91,12 @@ def clean_border(ax, west, east, south, north, edgecolor, linewidth, crs):
 
     # Plot this as a line around the extent
     clean_polygon.plot(
-        ax=ax, facecolor="none", edgecolor=edgecolor, linewidth=linewidth, zorder=1000
+        ax=ax,
+        facecolor="none",
+        edgecolor=edgecolor,
+        linewidth=linewidth,
+        capstyle="round",
+        zorder=1000,
     )
 
 

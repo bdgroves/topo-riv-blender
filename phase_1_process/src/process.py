@@ -12,7 +12,7 @@ from shapely.geometry import Polygon
 from phase_0_fetch.src.download_dem import (
     get_shapefile_extent,
     buffer_shapefile,
-    snakemake_type_exists
+    snakemake_type_exists,
 )
 from phase_1_process.src.process_functions import (
     get_raster_extent,
@@ -21,8 +21,9 @@ from phase_1_process.src.process_functions import (
     project,
     contour,
     make_labels_file,
-    make_custom_cmap
+    make_custom_cmap,
 )
+
 
 def setup_blender_data(
     map_crs,
@@ -37,6 +38,7 @@ def setup_blender_data(
     ocean_elevation,
     ocean_color,
     mask_boolean,
+    custom_min_dem,
     contour_boolean,
     contour_levels,
     convolution_coarsen,
@@ -58,7 +60,7 @@ def setup_blender_data(
     heightmap_layerfiles,
     texturemap_layerfiles,
     apronmap_file,
-    labels_file
+    labels_file,
 ):
     """Sets up the texture and height maps for blender to render.
 
@@ -84,6 +86,8 @@ def setup_blender_data(
         allow for ocean, which causes a splitting of the dual-cmap around zero
     mask_boolean: boolean
         option to mask out topography outside the shapefile's extent
+    custom_min_dem: flaot
+        value to modify minimum of the DEM color scale.
     contour_boolean: boolean
         option to contour the topography
     contour_levels: int
@@ -152,12 +156,17 @@ def setup_blender_data(
     # Read in the dem as a numpy array
     proj_dem, proj_ds, min_dem, max_dem = project(demfile, map_crs, tmp_dir)
 
+    # custom min_dem
+    if custom_min_dem != "NULL":
+        min_dem_cmap = min_dem  # save min_dem of domain for cmap
+        min_dem = custom_min_dem
+
     # Load extent shapefile
     extent_shp = gpd.read_file(extent_shpfile).to_crs(map_crs)
 
     # Get the boundaries of the extent files assuming a map_crs
     west, east, length, south, north, height = get_shapefile_extent(extent_shp)
-    
+
     # Buffer those boundaries (expand) using a user-defined buffering percentage
     buff_west, buff_east, buff_south, buff_north = buffer_shapefile(
         west, east, length, south, north, height, buffer
@@ -166,8 +175,8 @@ def setup_blender_data(
     # Create a polygon from the bounding box
     domain_geom = Polygon(
         zip(
-            [buff_west, buff_west, buff_east, buff_east],
-            [buff_north, buff_south, buff_south, buff_north],
+            [buff_west, buff_west, buff_east, buff_east, buff_west],
+            [buff_north, buff_south, buff_south, buff_north, buff_north],
         )
     )
 
@@ -185,17 +194,19 @@ def setup_blender_data(
     # Load flowlines if exists
     if flowlines_shpfile != "NULL":
         flowlines = gpd.read_file(flowlines_shpfile).to_crs(map_crs)
+        flowlines = gpd.clip(flowlines.buffer(0), extent_shp)
 
     # Load waterbody is exists
     if waterbody_shpfile != "NULL":
         waterbody = gpd.read_file(waterbody_shpfile).to_crs(map_crs)
+        waterbody = gpd.clip(waterbody.buffer(0), extent_shp)
 
-    # If there is ocean in the domain, we will splice together two colormaps 
-    # One for the topography and one for the ocean floor. 
+    # If there is ocean in the domain, we will splice together two colormaps
+    # One for the topography and one for the ocean floor.
     # Blender has issues when geometries intersect, so for better render results
     # The topography is bumped 1.5 bits upwards and the ocean is bumped 1.5 bits downwards.
     if ocean_boolean == True:
-        
+
         # With ocean_boolean, a 2nd layer at elevation = 0.0 m will be made, followed by the layer files
         files = [demfile] + ["OCEAN"] + layerfiles
 
@@ -204,8 +215,12 @@ def setup_blender_data(
 
         # Move ocean floor down and mountains up
         proj_dem_bath = proj_dem
-        proj_dem_bath[proj_dem <= ocean_elevation] -= type(proj_dem_bath[0,0])(overlap_prevention * (max_dem - min_dem))
-        proj_dem_bath[proj_dem > ocean_elevation] += type(proj_dem_bath[0,0])(overlap_prevention * (max_dem - min_dem))
+        proj_dem_bath[proj_dem <= ocean_elevation] -= type(proj_dem_bath[0, 0])(
+            overlap_prevention * (max_dem - min_dem)
+        )
+        proj_dem_bath[proj_dem > ocean_elevation] += type(proj_dem_bath[0, 0])(
+            overlap_prevention * (max_dem - min_dem)
+        )
 
         # Determine how much proportion of the relief is above ground
         proportion_above_ground = (max_dem - ocean_elevation) / (max_dem - min_dem)
@@ -234,8 +249,14 @@ def setup_blender_data(
 
         # Make a list of the cmaps and output texture and height map file locations
         cmaps = [topo_cmap] + [ocean_cmap] + layers_cmap
-        hgtmap_files = [heightmap_file] + [heightmap_file[:-4] + "_L0.png"] + heightmap_layerfiles
-        txtmap_files = [texturemap_file] + [texturemap_file[:-4] + "_L0.png"] + texturemap_layerfiles
+        hgtmap_files = (
+            [heightmap_file] + [heightmap_file[:-4] + "_L0.png"] + heightmap_layerfiles
+        )
+        txtmap_files = (
+            [texturemap_file]
+            + [texturemap_file[:-4] + "_L0.png"]
+            + texturemap_layerfiles
+        )
     else:
 
         # If there is no ocean region, the files are just the dem file followed by any layer files
@@ -261,7 +282,10 @@ def setup_blender_data(
                 proj_layer = proj_dem
 
             # Get the min and max values for the dem
-            min_layer = min_dem
+            if custom_min_dem == "NULL":
+                min_layer = min_dem
+            else:
+                min_layer = min_dem_cmap
             max_layer = max_dem
 
             # Modify the layer to have contours if specified
@@ -269,7 +293,7 @@ def setup_blender_data(
                 proj_layer = contour(
                     proj_ds, proj_layer, convolution_coarsen, convolution_stdddev
                 )
-            
+
             # load aerial imagery if it exists:
             if aerialfiles != "NULL":
                 # Project red band
@@ -286,19 +310,24 @@ def setup_blender_data(
                 )
                 bitdepth = 16
 
-                proj_aerial_rgb = np.stack((proj_aerial_r / float((2 ** bitdepth - 1)),
-                                            proj_aerial_g / float((2 ** bitdepth - 1)),
-                                            proj_aerial_b / float((2 ** bitdepth - 1))), axis=-1)
+                proj_aerial_rgb = np.stack(
+                    (
+                        proj_aerial_r / float((2**bitdepth - 1)),
+                        proj_aerial_g / float((2**bitdepth - 1)),
+                        proj_aerial_b / float((2**bitdepth - 1)),
+                    ),
+                    axis=-1,
+                )
 
         # Layer setup for ocean, EXPERIMENTAL
         elif file == "OCEAN":
 
-                # Create a layer at zero elevation
-                proj_layer = np.ones_like(proj_dem) * ocean_elevation
+            # Create a layer at zero elevation
+            proj_layer = np.ones_like(proj_dem) * ocean_elevation
 
-                # Get the min and max values for the ocean layer
-                min_layer = 0.0
-                max_layer = 1.0
+            # Get the min and max values for the ocean layer
+            min_layer = 0.0
+            max_layer = 1.0
 
         # Layer setup for layer files
         else:
@@ -315,13 +344,13 @@ def setup_blender_data(
                     max_layer = layers_vlim[i - 1][1]
 
             # Modify the layer is the same way as the DEM if ocean_boolean is selected
-            if ocean_boolean == True:  
-                proj_layer[proj_layer <= 0.0] -= type(proj_layer[0,0])(overlap_prevention * (
-                    max_dem - min_dem
-                ))
-                proj_layer[proj_layer > 0.0] += type(proj_layer[0,0])(overlap_prevention * (
-                    max_dem - min_dem
-                ))
+            if ocean_boolean == True:
+                proj_layer[proj_layer <= 0.0] -= type(proj_layer[0, 0])(
+                    overlap_prevention * (max_dem - min_dem)
+                )
+                proj_layer[proj_layer > 0.0] += type(proj_layer[0, 0])(
+                    overlap_prevention * (max_dem - min_dem)
+                )
 
         # Make height map figure starting at 2 and subsequent even numbers
         fig_heightmap, ax_heightmap, dpi_heightmap = fig_setup(
@@ -407,7 +436,7 @@ def setup_blender_data(
 
         # Draw Flowlines
         if flowlines_shpfile != "NULL":
-            
+
             # Automatic NHD drawing parameters
             if river_width == "auto":
                 flowlines.plot(
@@ -421,7 +450,7 @@ def setup_blender_data(
                     zorder=2,
                 )
 
-            # User-specified NHD drawing parameters    
+            # User-specified NHD drawing parameters
             else:
                 flowlines.plot(
                     ax=ax_texturemap, color=river_color, linewidth=river_width, zorder=2
@@ -437,7 +466,7 @@ def setup_blender_data(
             # Mask outside
             mask.plot(
                 ax=ax_texturemap,
-                alpha=1.0,
+                alpha=background_color[-1],
                 facecolor=background_color,
                 edgecolor="none",
                 zorder=3,
@@ -461,8 +490,9 @@ def setup_blender_data(
                 alpha=1.0,
                 facecolor="none",
                 edgecolor=wall_color,
-                zorder=4,
                 linewidth=wall_thickness,
+                capstyle="round",
+                zorder=4,
             )
 
         # Save the texture map
@@ -487,7 +517,9 @@ def setup_blender_data(
 
     # Save labels file if it exists
     if labels_shpfile != "NULL":
-        make_labels_file(labels_shpfile,labels_file,list(get_raster_extent(proj_ds)), map_crs)
+        make_labels_file(
+            labels_shpfile, labels_file, list(get_raster_extent(proj_ds)), map_crs
+        )
 
 
 if __name__ == "__main__":
@@ -496,22 +528,39 @@ if __name__ == "__main__":
     mask_boolean = snakemake_type_exists(snakemake.params, "mask_boolean", True)
     ocean_boolean = snakemake_type_exists(snakemake.params, "ocean_boolean", False)
     ocean_elevation = snakemake_type_exists(snakemake.params, "ocean_elevation", 0.0)
-    ocean_color = snakemake_type_exists(snakemake.params, "ocean_color", [0.1294,0.2275,0.3608,1.0])
+    ocean_color = snakemake_type_exists(
+        snakemake.params, "ocean_color", [0.1294, 0.2275, 0.3608, 1.0]
+    )
+    custom_min_dem = snakemake_type_exists(snakemake.params, "custom_min_dem", "NULL")
     contour_boolean = snakemake_type_exists(snakemake.params, "contour_boolean", False)
     contour_levels = snakemake_type_exists(snakemake.params, "contour_levels", 20)
-    convolution_coarsen = snakemake_type_exists(snakemake.params, "convolution_coarsen", 5.0)
-    convolution_stdddev = snakemake_type_exists(snakemake.params, "convolution_stddev", 2.0)
+    convolution_coarsen = snakemake_type_exists(
+        snakemake.params, "convolution_coarsen", 5.0
+    )
+    convolution_stdddev = snakemake_type_exists(
+        snakemake.params, "convolution_stddev", 2.0
+    )
     buffer = snakemake_type_exists(snakemake.params, "buffer", 0.0)
     topo_cmap = snakemake_type_exists(snakemake.params, "topo_cmap", "copper")
-    topo_cstops = snakemake_type_exists(snakemake.params, "topo_cstops", [[0,0,0],[255,255,255]])
-    topo_nstops = snakemake_type_exists(snakemake.params,"topo_nstops",  [])
+    topo_cstops = snakemake_type_exists(
+        snakemake.params, "topo_cstops", [[0, 0, 0], [255, 255, 255]]
+    )
+    topo_nstops = snakemake_type_exists(snakemake.params, "topo_nstops", [])
     layers_vlim = snakemake_type_exists(snakemake.params, "layers_vlim", [])
     layers_cmap = snakemake_type_exists(snakemake.params, "layers_cmap", [])
-    oceanfloor_cmap = snakemake_type_exists(snakemake.params, "oceanfloor_cmap", "Greys")
-    background_color = snakemake_type_exists(snakemake.params, "background_color", [0.5,0.5,0.5,1.0])
-    wall_color = snakemake_type_exists(snakemake.params, "wall_color", [0.2,0.133,0.0667,1.0])
+    oceanfloor_cmap = snakemake_type_exists(
+        snakemake.params, "oceanfloor_cmap", "Greys"
+    )
+    background_color = snakemake_type_exists(
+        snakemake.params, "background_color", [0.5, 0.5, 0.5, 1.0]
+    )
+    wall_color = snakemake_type_exists(
+        snakemake.params, "wall_color", [0.2, 0.133, 0.0667, 1.0]
+    )
     wall_thickness = snakemake_type_exists(snakemake.params, "wall_thickness", 1.0)
-    river_color = snakemake_type_exists(snakemake.params, "river_color", [0.1294,0.2275,0.3608,1.0])
+    river_color = snakemake_type_exists(
+        snakemake.params, "river_color", [0.1294, 0.2275, 0.3608, 1.0]
+    )
     river_width = snakemake_type_exists(snakemake.params, "river_width", "auto")
     min_res = snakemake_type_exists(snakemake.params, "min_res", 2000)
 
@@ -519,8 +568,12 @@ if __name__ == "__main__":
     extent_shpfile = snakemake.input["extent_shpfile"]
     demfile = snakemake.input["demfile"]
     aerialfiles = snakemake_type_exists(snakemake.input, "aerialfiles", "NULL")
-    flowlines_shpfile = snakemake_type_exists(snakemake.input, "flowlines_shpfile", "NULL")
-    waterbody_shpfile = snakemake_type_exists(snakemake.input, "waterbody_shpfile", "NULL")
+    flowlines_shpfile = snakemake_type_exists(
+        snakemake.input, "flowlines_shpfile", "NULL"
+    )
+    waterbody_shpfile = snakemake_type_exists(
+        snakemake.input, "waterbody_shpfile", "NULL"
+    )
     layerfiles = snakemake_type_exists(snakemake.input, "layerfiles", [])
     labels_shpfile = snakemake_type_exists(snakemake.input, "labels_shpfile", "NULL")
 
@@ -529,13 +582,17 @@ if __name__ == "__main__":
     heightmap_file = snakemake.output["heightmap_file"]
     texturemap_file = snakemake.output["texturemap_file"]
     apronmap_file = snakemake.output["apronmap_file"]
-    heightmap_layerfiles = snakemake_type_exists(snakemake.output, "heightmap_layerfiles", [])
-    texturemap_layerfiles = snakemake_type_exists(snakemake.output, "texturemap_layerfiles", [])
+    heightmap_layerfiles = snakemake_type_exists(
+        snakemake.output, "heightmap_layerfiles", []
+    )
+    texturemap_layerfiles = snakemake_type_exists(
+        snakemake.output, "texturemap_layerfiles", []
+    )
     labels_file = snakemake_type_exists(snakemake.output, "labels_file", "NULL")
 
     # making a custom topo cmap
     if topo_cmap == "custom":
-        topo_cmap = make_custom_cmap(topo_cstops,topo_nstops)
+        topo_cmap = make_custom_cmap(topo_cstops, topo_nstops)
 
     setup_blender_data(
         map_crs,
@@ -550,6 +607,7 @@ if __name__ == "__main__":
         ocean_elevation,
         ocean_color,
         mask_boolean,
+        custom_min_dem,
         contour_boolean,
         contour_levels,
         convolution_coarsen,
@@ -571,5 +629,5 @@ if __name__ == "__main__":
         heightmap_layerfiles,
         texturemap_layerfiles,
         apronmap_file,
-        labels_file
+        labels_file,
     )

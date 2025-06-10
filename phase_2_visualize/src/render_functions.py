@@ -384,9 +384,7 @@ def get_v_scale(exaggeration, x_length, y_length, relief):
             / max(x_length, y_length)
         )
     else:
-        return (
-            exaggeration * params.plane_size * relief / max(x_length, y_length)
-        )
+        return exaggeration * params.plane_size * relief / max(x_length, y_length)
 
 
 def get_dimensions(dimensions_file, width, height):
