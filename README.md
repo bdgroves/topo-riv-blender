@@ -1,4 +1,4 @@
-# TopoRivBlender <img src="images/render_thumbnail.png" align="right" alt="" width="600" />
+# TopoRivBlender <img src="images/render_thumbnail.png" align="right" alt="" width="500" />
 
 *A data pipeline for fetching, processing, and visualizing topographic and hydrographic data*
 
