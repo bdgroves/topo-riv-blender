@@ -1,3 +1,6 @@
+# For more details about the parameters, please refer to the README in the Github repository:
+# https://github.com/DOI-USGS/topo-riv-blender/blob/main/README.md
+
 ########## data management ##########
 # OpenTopography Products: https://portal.opentopography.org/apidocs/
 data_product = (

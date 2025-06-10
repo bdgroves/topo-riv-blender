@@ -1,9 +1,12 @@
+# For more details about the parameters, please refer to the README in the Github repository:
+# https://github.com/DOI-USGS/topo-riv-blender/blob/main/README.md
+
 ########## data management ##########
 # OpenTopography Products: https://portal.opentopography.org/apidocs/
 data_product = (
     "/API/globaldem"  # Within US use'/API/usgsdem', Global use '/API/globaldem'
 )
-dem_product = "SRTM15Plus"#"GEBCOIceTopo"  # determine automatically
+dem_product = "SRTM15Plus"  # "GEBCOIceTopo"  # determine automatically
 buffer = 0.2  # buffer space around watershed
 
 ########## map visualization ##########
@@ -17,7 +20,7 @@ topo_nstops = [0, 200, 256]
 
 # "ocean" parameters
 oceanfloor_cmap = "bone"
-ocean_elevation = 455.5 #m
+ocean_elevation = 455.5  # m
 
 ########## render hardware ##########
 GPU_boolean = False  # if you have a GPU, set this to 1 and this will run faster
