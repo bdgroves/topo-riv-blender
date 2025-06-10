@@ -8,10 +8,13 @@ def download_google_font(font_name, output_dir="fonts", new_font_name=None):
 
     Parameters
     ----------
-    font_name: 
-    output_dir: 
-    new_font_name: 
-    
+    font_name: str
+        name of google font
+    output_dir: str
+        directory to save font in
+    new_font_name: str
+        optional name of google font
+
     Returns
     -------
 
