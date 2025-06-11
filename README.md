@@ -4,7 +4,7 @@
 
 **Authors**: Jeffrey Kwang, Anthony Martinez, Wallace (Andy) Mcaliley, and Cee Nell
 
-**Point of contact**: Jeffrey Kwang ([jkwang\@usgs.gov](mailto:jkwang@usgs.gov){.email})
+**Point of contact**: Jeffrey Kwang ([jkwang\@usgs.gov](mailto:jkwang@usgs.gov))
 
 **Repository Type**: `python` script
 
