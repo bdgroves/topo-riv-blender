@@ -36,10 +36,27 @@ After installing the requirements, you should be able to make custom rendered im
 
 #### Install dependencies
 
-1. Install [Miniforge](https://github.com/conda-forge/miniforge) if you don't have a package manager already.
-2. Install [Blender](https://www.blender.org/download/)
-3. Add Blender command to `PATH` ([instructions based on OS](https://docs.blender.org/manual/en/latest/advanced/command_line/index.html))
-    - For Windows: to add the blender path to the `PATH` environmental variable, in the command prompt enter `setx path "%PATH%;C:\path\to\blenderInstallDirectory\"`
+##### For MacOS and Linux
+
+1. Install [homebrew](https://brew.sh/)
+2. Install [Miniforge](https://github.com/conda-forge/miniforge), with `brew install --cask miniforge`
+3. Install [Blender](https://www.blender.org/download/)
+4. Check that you can access both `conda` and `Blender` by typing them in the terminal.
+
+##### For Windows
+1. Install [Git Bash](https://git-scm.com/downloads)
+2. Install [Miniforge](https://github.com/conda-forge/miniforge)
+    - Open the `Miniforge Prompt`
+    - Execute `conda init bash`
+    - After running the command, you should see that the code modified the `~/.bash_profile`. This will allow you to use the `conda` command in Git Bash.
+3. Install [Blender](https://www.blender.org/download/)
+    - NOTE: Be sure to note where Blender is installed.
+    - At this time, 4.4 is the latest version and it installed on in `C:\Program Files\Blender Foundation\Blender 4.4`.
+4. Add Blender command to `PATH` by editing the `~/.bashrc`
+    - Open Git Bash
+    - Edit the file with `nano ~/.bashrc`
+    - Paste `export PATH=$PATH:"/c/Program Files/Blender Foundation/Blender 4.4"`. NOTE: Adjust the directory based on where Blender installed on your machine. Also make sure to adjust the version number accordingly.
+5. Check that you can access both `conda` and `Blender` by typing them in Git Bash.
 
 #### Get an API key from OpenTopography
 
