@@ -62,7 +62,10 @@ def setup_blender_data(
     apronmap_file,
     labels_file,
 ):
-    """Sets up the texture and height maps for blender to render.
+    """Sets up the texture and height maps for blender to render. It will create
+    an apronmap.png that determines the background in the render, a dimensions.npy
+    file that details the geometry of the landscape, a heightmap.png that quantifies
+    the topography, and a texturemap.png that determine the color of the topography.
 
     Parameters
     ----------
@@ -168,8 +171,9 @@ def setup_blender_data(
     west, east, length, south, north, height = get_shapefile_extent(extent_shp)
 
     # Buffer those boundaries (expand) using a user-defined buffering percentage
+    # 5x multiplier makes sure this buffer contains all the data
     buff_west, buff_east, buff_south, buff_north = buffer_shapefile(
-        west, east, length, south, north, height, buffer
+        west, east, length, south, north, height, buffer * 5.0
     )
 
     # Create a polygon from the bounding box
@@ -612,7 +616,7 @@ if __name__ == "__main__":
         contour_levels,
         convolution_coarsen,
         convolution_stdddev,
-        buffer * 5.0,
+        buffer,
         topo_cmap,
         oceanfloor_cmap,
         layers_cmap,

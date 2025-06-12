@@ -4,7 +4,7 @@ import re
 
 
 def download_google_font(font_name, output_dir="fonts", new_font_name=None):
-    """Download Google font
+    """Download Google font file
 
     Parameters
     ----------
@@ -17,6 +17,7 @@ def download_google_font(font_name, output_dir="fonts", new_font_name=None):
 
     Returns
     -------
+    none
 
     """
     # Create the output directory if it doesn't exist
