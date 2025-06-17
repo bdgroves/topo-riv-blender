@@ -85,16 +85,20 @@ def setup_blender_data(
         path of the flowline shapefile
     labels_shpfile: string
         path of the labels shapefile
-    *EXPERIMENTAL* ocean_boolean: boolean
-        allow for ocean, which causes a splitting of the dual-cmap around zero
+    ocean_boolean: boolean
+        allow for ocean, which causes a splitting of the dual-cmap around ocean elevation
+    ocean_elevation: float
+        elevation of the ocean
+    ocean_color: rgba list
+        color of the ocean
     mask_boolean: boolean
         option to mask out topography outside the shapefile's extent
-    custom_min_dem: flaot
+    custom_min_dem: float
         value to modify minimum of the DEM color scale.
     contour_boolean: boolean
         option to contour the topography
     contour_levels: int
-        number of countour levels
+        number of contour levels
     convolution_coarsen: float
         divisor that coarsens the data for contouring
     convolution_stdddev: float
@@ -103,8 +107,8 @@ def setup_blender_data(
         a percent buffer around the extent; maintains original aspect
     topo_cmap: matplotlib cmap
         cmap to use on the topography
-    *EXPERIMENTAL* oceanfloor_cmap: matplotlib cmap
-        cmap to use on the ocean
+    oceanfloor_cmap: matplotlib cmap
+        cmap to use on the ocean floor
     *EXPERIMENTAL* layers_cmap: list of matplotlib cmap
         cmaps to use for each layer
     *EXPERIMENTAL* layers_vlim: list of 2 element lists
@@ -113,7 +117,7 @@ def setup_blender_data(
         color of the background
     wall_color: rgba list
         color of the wall of the dem
-    wall_thickness: rgba list
+    wall_thickness: float
         thickness of the wall of the dem
     river_color: rgba list
         color of the rivers

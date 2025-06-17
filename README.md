@@ -153,7 +153,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - `dem_product`: The specific DEM product to be downloaded. Use `auto` to have the code automatically determine the coarsest DEM that will still maintain good image fidelity.
 - `nhd_flowline`: The flowline (rivers) resolution `flowline_mr` (medium resolution) or `flowline_hr` (high resolution). Use `flowline_auto` to have the code automatically determine which resolution to use. It will try to balance between too much and too little detail.
 - `nhd_waterbody`: The waterbody (lakes, reservoirs, ponds, etc.) resolution `waterbody_mr` (medium resolution) or `waterbody_hr` (high resolution).  Use `waterbody_auto` to have the code automatically determine which resolution to use.
-- `buffer`: A percentage that makes a buffer around the area of interest based on the percentage of height and width of the bounding box. This downloads extra data to ensure no missing data occurs near the edges of the download area.
+- `buffer`: A percentage that makes a buffer around the area of interest based on the percentage of height and width of the bounding box. This downloads extra data to ensure no missing data occurs near the edges of the download area. Default is 1%.
 
 #### Map Visualization
 - `background_color`: The rgba color of the surrounding background of the render.
@@ -167,8 +167,8 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - `GPU_boolean`: Set to `True` if you have a powerful GPU to run the render engine. CPU rendering works fine, but GPU rendering could be faster.
 
 #### Blender scene
-- `plane_size`: This is length of the major axis of the topographic plane in meters. We are making this landscape miniature to ensure the topography and camera placement are consistent.
-- `number_of_layers`: Number of additional data layers. `0` for just topography. More to come...
+- `plane_size`: This is length of the major axis of the topographic plane in meters. We are making this landscape miniature (1-meter long) to ensure the topography and camera placement are consistent.
+- `number_of_layers`: Number of additional data layers. `0` for just topography. See more info in `additional_parameters.md`.
 
 #### Camera settings
 - `view_transform`: Determines how color is [managed](https://docs.blender.org/manual/en/latest/render/color_management.html) in the render. Use `Filmic` For more realistic colors, and `Standard` for less dynamic range.
@@ -187,10 +187,10 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - `f_stop`: Size of aperture of camera. Lower it to have a shallow depth of field; i.e. only a thin area is in focus. Raise it to have a wider depth of field to make more in focus.
 
 #### Sun settings
-- `sun_tilt`: Degrees that the sun is from horizontal. Also called the altitude angle.
-- `sun_rotation`: Degrees that the sun rotated clockwise from North. Also called the azimuth angle.
-- `sun_strength`: Sun strength in Watts per square meter.
-- `sun_intensity`: Blender says this is a multiplier for sun disc lighting [[Documentation](https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/sky.html)]. I'm not sure what this means, but higher means brighter.
+- `sun_tilt`: Degrees that the sun is from horizontal. Also called the altitude angle. Default is 45 degrees, camera is tilted downward 45 degrees.
+- `sun_rotation`: Degrees that the sun rotated clockwise from North. Also called the azimuth angle. Default is 180 degrees, camera facing North.
+- `sun_strength`: Sun strength in Watts per square meter. Default is 1.0. If adjustment is needed, I'd recommend changing it within the Blender GUI. The final image is quite sensitive to this value.
+- `sun_intensity`: Blender says this is a multiplier for sun disc lighting [[Documentation](https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/sky.html)]. I'm not sure what this means, but higher means brighter. Default is 0.5. Like `sun_strength`, I'd recommend changing it within the Blender GUI. 
 
 #### Landscape representation
 - `min_res`: The minimum resolution of the minor axis of the height and texture map. This partial sets the detail of the height map and texture map. `2000` is a good starting point. Increasing this will give finer detail but is more computationally expensive to run.
