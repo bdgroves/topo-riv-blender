@@ -447,7 +447,6 @@ def setup_blender_data(
 
             # Automatic NHD drawing parameters
             if river_width == "auto":
-                print(flowlines)
                 flowlines.plot(
                     ax=ax_texturemap,
                     color=river_color,
