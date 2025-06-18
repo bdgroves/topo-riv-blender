@@ -4,7 +4,7 @@ from pynhd import NHD
 from phase_0_fetch.src.download_dem import (
     snakemake_type_exists,
     get_shapefile_extent,
-    estimate_area
+    estimate_area,
 )
 
 
@@ -65,8 +65,8 @@ def nhd_download(nhd_type, extent_shpfile, nhd_shpfile, render_pixels):
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
-    # Load extent shapefile
-    extent = gpd.read_file(extent_shpfile)
+    # Load extent shapefile, ensure it's in geographic coordinates
+    extent = gpd.read_file(extent_shpfile).to_crs("EPSG:4326")
 
     # Determine NHD product automatically
     if nhd_type.endswith("auto") == True:
@@ -81,7 +81,7 @@ def nhd_download(nhd_type, extent_shpfile, nhd_shpfile, render_pixels):
 
         # Set up NHD
         hr = NHD(auto_nhd_type)
-    
+
     # Use user-specified NHD product
     else:
 

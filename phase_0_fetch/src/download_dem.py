@@ -461,7 +461,7 @@ def bmi_download_dem_extent(
 
     """
 
-    # Load extent shapefile
+    # Load extent shapefile, ensure it's in geographic coordinates
     shp = gpd.read_file(extent_shpfile).to_crs("EPSG:4326")
 
     # Get the boundaries of the extent files assuming a WGS84 CRS

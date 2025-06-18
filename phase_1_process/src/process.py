@@ -202,12 +202,12 @@ def setup_blender_data(
     # Load flowlines if exists
     if flowlines_shpfile != "NULL":
         flowlines = gpd.read_file(flowlines_shpfile).to_crs(map_crs)
-        flowlines = gpd.clip(flowlines.buffer(0), extent_shp)
+        flowlines = gpd.clip(flowlines.make_valid(), extent_shp)
 
     # Load waterbody is exists
     if waterbody_shpfile != "NULL":
         waterbody = gpd.read_file(waterbody_shpfile).to_crs(map_crs)
-        waterbody = gpd.clip(waterbody.buffer(0), extent_shp)
+        waterbody = gpd.clip(waterbody.make_valid(), extent_shp)
 
     # If there is ocean in the domain, we will splice together two colormaps
     # One for the topography and one for the ocean floor.
@@ -447,6 +447,7 @@ def setup_blender_data(
 
             # Automatic NHD drawing parameters
             if river_width == "auto":
+                print(flowlines)
                 flowlines.plot(
                     ax=ax_texturemap,
                     color=river_color,
