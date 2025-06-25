@@ -213,7 +213,7 @@ def project(file, map_crs, tmp_dir):
         min_array = np.nanmin(proj_array)
         max_array = np.nanmax(proj_array)
 
-    return proj_array, proj_ds, min_array, max_array
+    return proj_array, proj_ds, min_array, max_array, NaN
 
 
 def contour(ds, dem, coarsen, stddev):
@@ -345,3 +345,31 @@ def make_custom_cmap(cstops, nstops):
 
     # return the matplotlib colormap
     return mcolors.ListedColormap(vals)
+
+
+def truncate_colormap(cmap_name, minval=0.0, maxval=1.0, n=256):
+    """Truncates a named matplotlib colormap. Adapted from https://stackoverflow.com/questions/18926031/how-to-extract-a-subset-of-a-colormap-as-a-new-colormap-in-matplotlib
+
+    Parameters
+    ----------
+    cmap: string
+        matplotlib colormap name
+    minval: float
+        min val of cmap
+    maxval: float
+        max val of cmap
+    n: integer
+        number of stops in cmap
+
+    Returns
+    -------
+    new_cmap: matplotlib cmap
+        the custom matplotlib colormap
+
+    """
+    cmap = plt.get_cmap(cmap_name)
+    new_cmap = mcolors.LinearSegmentedColormap.from_list(
+        "trunc({n},{a:.2f},{b:.2f})".format(n=cmap_name, a=minval, b=maxval),
+        cmap(np.linspace(minval, maxval, n)),
+    )
+    return new_cmap

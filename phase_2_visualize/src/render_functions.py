@@ -515,7 +515,7 @@ def add_pin(
     if width / height > 1.0:
         norm_y *= height / width
     else:
-        norm_x = width / height
+        norm_x *= width / height
 
     label_collection = bpy.data.collections.new(label)
     bpy.context.scene.collection.children.link(label_collection)

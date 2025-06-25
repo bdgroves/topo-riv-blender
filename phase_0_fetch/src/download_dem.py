@@ -320,7 +320,7 @@ def opentopography_api_download(params, demfile):
 
             # Make a temp directory to hold the dems strips
             tmp_dir = (
-                out_dir.replace("out", "tmp") + "/" + os.path.basename(demfile)[:-4]
+                out_dir.replace("/out", "/tmp") + "/" + os.path.basename(demfile)[:-4]
             )
             if not os.path.exists(tmp_dir):
                 os.makedirs(tmp_dir)

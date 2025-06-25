@@ -11,22 +11,17 @@ buffer = 0.2  # buffer space around watershed
 
 ########## map visualization ##########
 background_color = [0.1, 0.1, 0.1, 1.0]
-wall_color = [0.2, 0.133, 0.0667, 1.0]
-
-# topography colormap
-topo_cmap = "custom"
-topo_cstops = [[21, 32, 21], [44, 35, 28], [200, 200, 200]]
-topo_nstops = [0, 200, 256]
+wall_color = [0.1, 0.0667, 0.0333, 1.0]
 
 ########## Label Parameters ##########
 pin_sides = 4  # sides of pin
-pin_height = 0.02  # height of pin
+pin_height = 0.015  # height of pin
 pin_radius1 = 0.0  # bottom of pin
-pin_radius2 = 0.01  # top of pin
+pin_radius2 = 0.00667  # top of pin
 pin_label_buffer = 0.05  # space between pin and label
-label_scale = 0.025  # size of label
+label_scale = 0.035  # size of label
 label_font = (
-    "Roboto Condensed"  # Specify Google Fonts, Browse here: https://fonts.google.com/
+    "Barlow Condensed"  # Specify Google Fonts, Browse here: https://fonts.google.com/
 )
 shadow_boolean = False  # alllow shadows for the label
 

@@ -26,22 +26,21 @@ rule create_shapefile:
     params:
         coords = [[35.3606, 138.7274],[35.3438, 138.7522]],
         labels = ["Mt. Fuji", "Hoeizan"],
-        pin_colors = [[1.0,0.0,0.0,1.0],[0.0,0.0,1.0,1.0]],
-        label_colors = [[1.0,1.0,1.0,1.0],[1.0,1.0,1.0,1.0]],
+        pin_colors = [[0.75,0.0,0.0,1.0],[0.0,0.0,0.75,1.0]],
+        label_colors = [[0.0,0.0,0.0,1.0],[0.0,0.0,0.0,1.0]],
         crs = "EPSG:4326"
     output:
         shpfile = "phase_0_fetch/out/{name}/labels.shp"
     script:
         "phase_0_fetch/src/make_shpfile.py"
 
-
 # Downloads a digital elevation model within bounding box
 rule download_dem:
     params:
         data_product = parameters.data_product,
         dem_product = parameters.dem_product,
-        UL_corner = [35.44522175270668, 138.6206067267965],
-        LR_corner = [35.273577447392256, 138.86512067423828],
+        UL_corner = [35.6, 138.5],
+        LR_corner = [35.1, 139.0],
         render_pixels = parameters.res_x * parameters.res_y,
         buffer = parameters.buffer
     output:
@@ -50,6 +49,22 @@ rule download_dem:
     script:
         "phase_0_fetch/src/download_dem_bounding_box.py"
 
+# Downloads aerial imagery within extent
+rule download_aerial:
+    params:
+        query = {
+                "eo:cloud_cover": {"lte": 25},
+                "platform":       {"in": ["landsat-8"]}
+                },
+        start_query = "2021-11-01",
+        end_query = "2022-02-01"
+    input:
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    output:
+        out_bands = ["phase_0_fetch/out/{name}/" + color + ".tif" for color in ["red", "green", "blue"]]
+    script:
+        "phase_0_fetch/src/get_imagery.py"
+
 # Creates a grayscale height map and texture map for Blender to render.
 # The height map is used to determine how high the landscape should be 
 # in the render, and the texture map determines the color of the landscape.
@@ -57,14 +72,12 @@ rule create_heightmap_texturemap:
     params:
         map_crs = "EPSG:3857",
         buffer = parameters.buffer,
-        topo_cmap = parameters.topo_cmap,
-        topo_cstops = parameters.topo_cstops,
-        topo_nstops = parameters.topo_nstops,
         background_color = parameters.background_color,
         wall_color = parameters.wall_color
     input:
         extent_shpfile = "phase_0_fetch/out/{name}/extent.shp",
         demfile =  "phase_0_fetch/out/{name}/dem.tif",
+        aerialfiles =  ["phase_0_fetch/out/{name}/" + color + ".tif" for color in ["red", "green", "blue"]],
         labels_shpfile = "phase_0_fetch/out/{name}/labels.shp"
     output:
         dimensions_file = "phase_1_process/out/{name}/dimensions.npy",

@@ -22,6 +22,7 @@ from phase_1_process.src.process_functions import (
     contour,
     make_labels_file,
     make_custom_cmap,
+    truncate_colormap,
 )
 
 
@@ -53,6 +54,7 @@ def setup_blender_data(
     wall_thickness,
     river_color,
     river_width,
+    river_width_coefficient,
     min_res,
     dimensions_file,
     heightmap_file,
@@ -123,6 +125,8 @@ def setup_blender_data(
         color of the rivers
     river_width: float
         width of the river
+    river_width_coefficient: float
+        coefficient in the auto river width algorithm, default is 2.2
     min_res: int
         minimum pixel resolution of the short side of the image
     dimensions_file: string
@@ -161,7 +165,7 @@ def setup_blender_data(
         map_crs = gpd.read_file(extent_shpfile).estimate_utm_crs()
 
     # Read in the dem as a numpy array
-    proj_dem, proj_ds, min_dem, max_dem = project(demfile, map_crs, tmp_dir)
+    proj_dem, proj_ds, min_dem, max_dem, nan_dem = project(demfile, map_crs, tmp_dir)
 
     # custom min_dem
     if custom_min_dem != "NULL":
@@ -305,24 +309,29 @@ def setup_blender_data(
             # load aerial imagery if it exists:
             if aerialfiles != "NULL":
                 # Project red band
-                proj_aerial_r, proj_aerial_r_ds, min_aerial_r, max_aerial_r = project(
-                    aerialfiles[0], map_crs, tmp_dir
+                proj_aerial_r, proj_aerial_r_ds, min_aerial_r, max_aerial_r, nan_r = (
+                    project(aerialfiles[0], map_crs, tmp_dir)
                 )
                 # Project green band
-                proj_aerial_g, proj_aerial_g_ds, min_aerial_g, max_aerial_g = project(
-                    aerialfiles[1], map_crs, tmp_dir
+                proj_aerial_g, proj_aerial_g_ds, min_aerial_g, max_aerial_g, nan_g = (
+                    project(aerialfiles[1], map_crs, tmp_dir)
                 )
                 # Project blue band
-                proj_aerial_b, proj_aerial_b_ds, min_aerial_b, max_aerial_b = project(
-                    aerialfiles[2], map_crs, tmp_dir
+                proj_aerial_b, proj_aerial_b_ds, min_aerial_b, max_aerial_b, nan_b = (
+                    project(aerialfiles[2], map_crs, tmp_dir)
                 )
-                bitdepth = 16
 
+                # Covert NaN to min value
+                proj_aerial_r[proj_aerial_r == nan_r] = min_aerial_r
+                proj_aerial_g[proj_aerial_g == nan_g] = min_aerial_g
+                proj_aerial_b[proj_aerial_b == nan_b] = min_aerial_b
+
+                # make rgb array
                 proj_aerial_rgb = np.stack(
                     (
-                        proj_aerial_r / float((2**bitdepth - 1)),
-                        proj_aerial_g / float((2**bitdepth - 1)),
-                        proj_aerial_b / float((2**bitdepth - 1)),
+                        (proj_aerial_r - min_aerial_r) / (max_aerial_r - min_aerial_r),
+                        (proj_aerial_g - min_aerial_g) / (max_aerial_g - min_aerial_g),
+                        (proj_aerial_b - min_aerial_b) / (max_aerial_b - min_aerial_b),
                     ),
                     axis=-1,
                 )
@@ -341,7 +350,7 @@ def setup_blender_data(
         else:
 
             # Project additional layer
-            proj_layer, proj_layer_ds, min_layer, max_layer = project(
+            proj_layer, proj_layer_ds, min_layer, max_layer, nan_layer = project(
                 file, map_crs, tmp_dir
             )
 
@@ -450,7 +459,7 @@ def setup_blender_data(
                 flowlines.plot(
                     ax=ax_texturemap,
                     color=river_color,
-                    linewidth=2.2
+                    linewidth=river_width_coefficient
                     * np.exp(
                         -0.00001
                         * np.sqrt((buff_east - buff_west) * (buff_north - buff_south))
@@ -553,6 +562,9 @@ if __name__ == "__main__":
     topo_cstops = snakemake_type_exists(
         snakemake.params, "topo_cstops", [[0, 0, 0], [255, 255, 255]]
     )
+    topo_cmap_vlim = snakemake_type_exists(
+        snakemake.params, "topo_cmap_vlim", [0.0, 1.0]
+    )
     topo_nstops = snakemake_type_exists(snakemake.params, "topo_nstops", [])
     layers_vlim = snakemake_type_exists(snakemake.params, "layers_vlim", [])
     layers_cmap = snakemake_type_exists(snakemake.params, "layers_cmap", [])
@@ -570,6 +582,9 @@ if __name__ == "__main__":
         snakemake.params, "river_color", [0.1294, 0.2275, 0.3608, 1.0]
     )
     river_width = snakemake_type_exists(snakemake.params, "river_width", "auto")
+    river_width_coefficient = snakemake_type_exists(
+        snakemake.params, "river_width_coefficient", 2.2
+    )
     min_res = snakemake_type_exists(snakemake.params, "min_res", 2000)
 
     # Gather the Snakemake Inputs
@@ -601,6 +616,11 @@ if __name__ == "__main__":
     # making a custom topo cmap
     if topo_cmap == "custom":
         topo_cmap = make_custom_cmap(topo_cstops, topo_nstops)
+    else:
+        if topo_cmap_vlim[0] != 0.0 or topo_cmap_vlim[1] != 1.0:
+            topo_cmap = truncate_colormap(
+                topo_cmap, minval=topo_cmap_vlim[0], maxval=topo_cmap_vlim[1]
+            )
 
     setup_blender_data(
         map_crs,
@@ -630,6 +650,7 @@ if __name__ == "__main__":
         wall_thickness,
         river_color,
         river_width,
+        river_width_coefficient,
         min_res,
         dimensions_file,
         heightmap_file,
