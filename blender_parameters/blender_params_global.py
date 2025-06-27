@@ -3,9 +3,6 @@
 
 ########## data management ##########
 # OpenTopography Products: https://portal.opentopography.org/apidocs/
-data_product = (
-    "/API/globaldem"  # Within US use'/API/usgsdem', Global use '/API/globaldem'
-)
 dem_product = "auto"  # determine automatically
 buffer = 0.2  # buffer space around watershed
 

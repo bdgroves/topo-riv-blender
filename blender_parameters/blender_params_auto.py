@@ -3,9 +3,6 @@
 
 ########## data management ##########
 # OpenTopography Products: https://portal.opentopography.org/apidocs/
-data_product = (
-    "/API/usgsdem"  # Within US use'/API/usgsdem', Global use '/API/globaldem'
-)
 dem_product = "auto"  # determine automatically (see options here: https://portal.opentopography.org/apidocs/#/)
 
 # NHD products

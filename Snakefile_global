@@ -37,7 +37,6 @@ rule create_shapefile:
 # Downloads a digital elevation model within bounding box
 rule download_dem:
     params:
-        data_product = parameters.data_product,
         dem_product = parameters.dem_product,
         UL_corner = [35.6, 138.5],
         LR_corner = [35.1, 139.0],

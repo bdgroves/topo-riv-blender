@@ -3,7 +3,6 @@
 
 ########## data management ##########
 # OpenTopography Products: https://portal.opentopography.org/apidocs/
-data_product = "/API/usgsdem"  # <- USGS datasets
 dem_product = "USGS10m"  # usgs 10m
 buffer = 0.2  # buffer space around watershed
 

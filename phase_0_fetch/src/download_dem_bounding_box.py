@@ -17,7 +17,6 @@ def bmi_download_dem_bbox(
     LR_corner,
     extent_shpfile,
     demfile,
-    data_product,
     dem_product,
     buffer,
     render_pixels,
@@ -34,8 +33,6 @@ def bmi_download_dem_bbox(
         path of of the extent shapefile of the bbox to be outputted
     demfile: string
         path of the dem file to be downloaded
-    data_product: string
-        name of the data product used by the opentopography api
     dem_product: string
         name of the dem product used by the opentopography api
     buffer: float
@@ -61,8 +58,7 @@ def bmi_download_dem_bbox(
     )
 
     # Determine the correct data and dem product if set to Auto-Mode
-    temp_data_product, temp_dem_product = determine_dem_product(
-        data_product,
+    temp_dem_product = determine_dem_product(
         dem_product,
         buff_west,
         buff_east,
@@ -70,13 +66,12 @@ def bmi_download_dem_bbox(
         buff_north,
         render_pixels,
     )
-    print("Using " + temp_data_product + " with " + temp_dem_product)
+    print("Automatically chose " + temp_dem_product)
 
     # Get Default parameter set from BMI-Topography
     params = Topography.DEFAULT.copy()
 
     # Set parameter values to user-defined settings
-    params["data_type"] = temp_data_product
     params["dem_type"] = temp_dem_product
     params["output_format"] = "GTiff"
     params["west"] = buff_west
@@ -106,9 +101,6 @@ def bmi_download_dem_bbox(
 
 
 if __name__ == "__main__":
-    data_product = snakemake_type_exists(
-        snakemake.params, "data_product", "/API/globaldem"
-    )
     dem_product = snakemake_type_exists(snakemake.params, "dem_product", "NASADEM")
     render_pixels = snakemake_type_exists(snakemake.params, "render_pixels", 1)
     buffer = snakemake_type_exists(snakemake.params, "buffer", 1.0)
@@ -122,7 +114,6 @@ if __name__ == "__main__":
         LR_corner,
         extent_shpfile,
         demfile,
-        data_product,
         dem_product,
         buffer,
         render_pixels,

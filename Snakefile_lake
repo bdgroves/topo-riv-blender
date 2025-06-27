@@ -14,7 +14,6 @@ rule all:
 # Downloads a digital elevation model within bounding box
 rule download_dem:
     params:
-        data_product = parameters.data_product,
         dem_product = parameters.dem_product,
         UL_corner = [56.03371860720012, 102.75351112656995],
         LR_corner = [50.919371945323256, 110.61494439816751],

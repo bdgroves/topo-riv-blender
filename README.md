@@ -149,8 +149,7 @@ In the example below, we will explain the workflow for making ***Figure 1*** (HU
 A parameters file is saved in the `blender_parameters` folder and contains many of the options that determine the look of your final render.
 
 #### Data Management
-- `data_product`: The data product to be downloaded from Open Topography's [API](https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets). `/API/usgsdem` for USGS DEMs and `/API/global` for global DEMs.
-- `dem_product`: The specific DEM product to be downloaded. Use `auto` to have the code automatically determine the coarsest DEM that will still maintain good image fidelity.
+- `dem_product`: The specific DEM product to be downloaded from Open Topography's [API](https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets). Use `auto` to have the code automatically determine the coarsest DEM that will still maintain good image fidelity.
 - `nhd_flowline`: The flowline (rivers) resolution `flowline_mr` (medium resolution) or `flowline_hr` (high resolution). Use `flowline_auto` to have the code automatically determine which resolution to use. It will try to balance between too much and too little detail.
 - `nhd_waterbody`: The waterbody (lakes, reservoirs, ponds, etc.) resolution `waterbody_mr` (medium resolution) or `waterbody_hr` (high resolution).  Use `waterbody_auto` to have the code automatically determine which resolution to use.
 - `buffer`: A percentage that makes a buffer around the area of interest based on the percentage of height and width of the bounding box. This downloads extra data to ensure no missing data occurs near the edges of the download area. Default is 1%.

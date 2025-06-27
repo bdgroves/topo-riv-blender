@@ -14,7 +14,6 @@ rule all:
 # Downloads a digital elevation model within extent 
 rule download_dem:
     params:
-        data_product = parameters.data_product,
         dem_product = parameters.dem_product,
         UL_corner = (45.85, -121.65),
         LR_corner = (45.50, -121.19),
@@ -59,7 +58,7 @@ rule render:
     output:
         output_file = "phase_2_visualize/out/render_{name}.png"
     shell:
-        "Blender -P phase_2_visualize/src/render.py -- "
+        "Blender -b -P phase_2_visualize/src/render.py -- "
         "{input.blender_params} "
         "{input.dimensions_file} {input.heightmap_file} {input.texturemap_file} {input.apronmap_file} NULL "
         "{output.output_file} "

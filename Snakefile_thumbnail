@@ -18,7 +18,6 @@ rule all:
 # Downloads a digital elevation model within extent 
 rule download_dem:
     params:
-        data_product = parameters.data_product,
         dem_product = parameters.dem_product,
         UL_corner = (UL_corner_specify[0], UL_corner_specify[1]),
         LR_corner = (UL_corner_specify[0]-square, UL_corner_specify[1]+square*aspect),
