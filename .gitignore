@@ -20,7 +20,7 @@ opentopography_api_key.txt
 
 #IWAAs workflow
 Snakefile_IWAAs
-blender_parameters/blender_params_IWAAs*
+blender_parameters/blender_params_aerial_IWAAs*
 
 #keep usa extent
 !phase_0_fetch/in/usa_extent.geojson
