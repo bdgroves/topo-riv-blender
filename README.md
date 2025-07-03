@@ -242,19 +242,27 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 #### Do I need to specify a HUC?
 - No, you do not. I have also created a workflow example where you can download topography based on a bounding box. For this workflow, you specify the longitude/latitude pair for the upper-left and lower-right corners of the bounding box. The workflow can be found here: `snakemake --cores 1 -s Snakefile_contour`. Note, here the `-s` flag allows you to specify a different `snakemake` workflow contained the snakefile, `Snakefile_contour`.
 
+#### How can I use satellite imagery in the renders.
+- There is an example workflow (`snakemake --cores 1 -s Snakefile_aerial`) that pulls MODIS data using a STAC API. Using the same STAC API, you also have access to Landsat, Sentinel, and other data products. See more in this [Planetary Computer Data Catalog](https://planetarycomputer.microsoft.com/catalog).
+
+<div align="center">
+    <img src="images/render_kingspeak.png" alt="render custom example of the mt. fuji" width="100%">
+    <p> <b>Figure 10</b>: <em>Example custom render of Kings Peak in Northeast Utah with MODIS satellite imagery.</em></p>
+</div>
+
 #### How much can I customize my renders with this pipeline?
 - While I encourage you to fork your own version of this code to start playing with Blender, you can still make some neat renders with the pipeline in its current state. This is the output of `snakemake --cores 1 -s Snakefile_contour`:
   
 <div align="center">
     <img src="images/render_columbiariver.png" alt="render custom example of the columbia river" width="100%">
-    <p> <b>Figure 10</b>: <em>Example custom render of the Columbia River.</em></p>
+    <p> <b>Figure 11</b>: <em>Example custom render of the Columbia River.</em></p>
 </div>
 
 - This is the output of `snakemake --cores 1 -s Snakefile_global`:
 
 <div align="center">
     <img src="images/render_mtfuji.png" alt="render custom example of the mt. fuji" width="100%">
-    <p> <b>Figure 11</b>: <em>Example custom render of Mt. Fuji.</em></p>
+    <p> <b>Figure 12</b>: <em>Example custom render of Mt. Fuji in Japan with Landsat satellite imagery. This is an example of how to label your renders.</em></p>
 </div>
 
 #### Can I add more than one layer/surface?
@@ -264,7 +272,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 
 <div align="center">
     <img src="images/render_lakebaikal.png" alt="render custom example of lake baikal" width="50%">
-    <p> <b>Figure 12</b>: <em>Example custom render of Lake Baikal.</em></p>
+    <p> <b>Figure 13</b>: <em>Example custom render of Lake Baikal.</em></p>
 </div>
 
 #### How do I iterate and improve my renders efficiently?
@@ -279,21 +287,21 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 
 <div align="center">
     <img src="images/blender_ui.png" alt="adjusting the exaggeration in realtime" width="100%">
-    <p> <b>Figure 13</b>: <em>The Blender GUI. (A) The 3D viewport of the camera. (B) Use these options to view a non-rendered view (left) or a rendered view (right). (C) The scene collection containing the different objects and the camera. (D) The properties of the scene. Screenshot shows the properties for the location, rotation, and scale of the topography.</em></p>
+    <p> <b>Figure 14</b>: <em>The Blender GUI. (A) The 3D viewport of the camera. (B) Use these options to view a non-rendered view (left) or a rendered view (right). (C) The scene collection containing the different objects and the camera. (D) The properties of the scene. Screenshot shows the properties for the location, rotation, and scale of the topography.</em></p>
 </div>
 
 - In the Blender properties (D), you can adjust the location, rotation, and scale of the topography, adjust the camera settings and orientation, modify the lighting of the scene, and more. Use the `Material Preview` mode (B) when adjusting the geometric properties. The changes that you make will instantly show in the 3D viewport (A). 
 
 <div align="center">
     <img src="images/exagg_mod.gif" alt="adjusting the exaggeration in realtime" width="50%">
-    <p> <b>Figure 14</b>: <em>Adjusting the scale of the topography with the Blender GUI.</em></p>
+    <p> <b>Figure 15</b>: <em>Adjusting the scale of the topography with the Blender GUI.</em></p>
 </div>
 
-- The GIF above does not look nearly as pretty as the final rendered image [Figure 10]. That's because the scene has not been rendered. To see a preview of what the render may look like, select the `Rendered` mode (B). Adjusting the lighting with the Blender GUI requires you to wait a few seconds for to re-render the scene. The image becomes fuzzy because there a too few samples to render the whole image. Over time, with more samples, the render becomes clearer.
+- The GIF above does not look nearly as pretty as the final rendered image [Figure 11]. That's because the scene has not been rendered. To see a preview of what the render may look like, select the `Rendered` mode (B). Adjusting the lighting with the Blender GUI requires you to wait a few seconds for to re-render the scene. The image becomes fuzzy because there a too few samples to render the whole image. Over time, with more samples, the render becomes clearer.
 
 <div align="center">
     <img src="images/light_mod.gif" alt="adjusting the lighting in realtime" width="50%">
-    <p> <b>Figure 15</b>: <em>Adjusting the lighting with the Blender GUI.</em></p>
+    <p> <b>Figure 16</b>: <em>Adjusting the lighting with the Blender GUI.</em></p>
 </div>
 
 - Make sure to take note of the adjustments that you made and record them in the parameters `.py` files in the `blender_parameters` folder. Replace the `-b` in the `Snakefile` and use the pipeline to re-render the scene to get you updated image. You can either delete the rendered image to get the pipeline to re-render or force it to create it. For the contoured image of the Columbia River, you would need to run the following command: `snakemake --cores 1 -s Snakefile_contour phase_2_visualize/out/render_columbiariver.png --force`.
