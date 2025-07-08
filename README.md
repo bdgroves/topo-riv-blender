@@ -51,7 +51,7 @@ After installing the requirements, you should be able to make custom rendered im
     - After running the command, you should see that the code modified the `~/.bash_profile`. This will allow you to use the `conda` command in Git Bash.
 3. Install [Blender](https://www.blender.org/download/)
     - NOTE: Be sure to note where Blender is installed.
-    - At this time, 4.4 is the latest version and it installed on in `C:\Program Files\Blender Foundation\Blender 4.4`.
+    - At this time, 4.4 is the latest version and it installed in `C:\Program Files\Blender Foundation\Blender 4.4`.
 4. Add Blender command to `PATH` by editing the `~/.bashrc`
     - Open Git Bash
     - Edit the file with `nano ~/.bashrc`
