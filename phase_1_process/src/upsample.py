@@ -1,6 +1,8 @@
 from osgeo import gdal
 import subprocess
 
+gdal.UseExceptions()
+
 
 def resample(upsample, method, input_bands, output_bands):
     for i in range(0, len(input_bands)):

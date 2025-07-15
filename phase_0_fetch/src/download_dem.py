@@ -7,6 +7,8 @@ from osgeo import gdal
 import osgeo_utils.gdal_merge
 from shapely.geometry import box
 
+gdal.UseExceptions()
+
 
 def snakemake_type_exists(snakemake_type, string, default_input):
     """Checks if string exists in a snakemake type and applies a default value if it does not exist.

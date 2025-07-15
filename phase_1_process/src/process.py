@@ -25,6 +25,8 @@ from phase_1_process.src.process_functions import (
     truncate_colormap,
 )
 
+gdal.UseExceptions()
+
 
 def setup_blender_data(
     map_crs,

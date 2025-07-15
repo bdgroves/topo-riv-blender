@@ -17,6 +17,8 @@ from planetary_computer import sign_url
 
 from phase_0_fetch.src.download_dem import snakemake_type_exists, get_shapefile_extent
 
+gdal.UseExceptions()
+
 
 def query_imagery_stac(
     intersects: dict = None,

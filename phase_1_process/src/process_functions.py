@@ -10,6 +10,8 @@ from astropy.convolution import Gaussian2DKernel, convolve
 
 from phase_0_fetch.src.download_dem import get_shapefile_extent
 
+gdal.UseExceptions()
+
 
 def get_raster_extent(dataset):
     """Gets extent coodinates of the raster image
