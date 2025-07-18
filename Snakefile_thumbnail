@@ -15,18 +15,27 @@ rule all:
     input:
         "phase_2_visualize/out/render_thumbnail.png",
 
+# Make the bounding box
+rule make_bounding_box:
+    params:
+        UL_corner = (UL_corner_specify[0], UL_corner_specify[1]),
+        LR_corner = (UL_corner_specify[0]-square, UL_corner_specify[1]+square*aspect),
+    output:
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    script:
+        "phase_0_fetch/src/make_bounding_box.py"
+        
 # Downloads a digital elevation model within extent 
 rule download_dem:
     params:
         dem_product = parameters.dem_product,
-        UL_corner = (UL_corner_specify[0], UL_corner_specify[1]),
-        LR_corner = (UL_corner_specify[0]-square, UL_corner_specify[1]+square*aspect),
         buffer = parameters.buffer
-    output:
-        demfile = "phase_0_fetch/out/{name}/dem.tif",
+    input:
         extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    output:
+        demfile = "phase_0_fetch/out/{name}/dem.tif"
     script:
-        "phase_0_fetch/src/download_dem_bounding_box.py"
+        "phase_0_fetch/src/download_dem.py"
 
 # Downloads NHD waterbody data within extent
 rule get_nhd_wb:

@@ -11,18 +11,27 @@ rule all:
     input:
         "phase_2_visualize/out/render_columbiariver.png",
 
+# Make the bounding box
+rule make_bounding_box:
+    params:
+        UL_corner = (45.85, -121.65),
+        LR_corner = (45.50, -121.19),
+    output:
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    script:
+        "phase_0_fetch/src/make_bounding_box.py"
+
 # Downloads a digital elevation model within extent 
 rule download_dem:
     params:
         dem_product = parameters.dem_product,
-        UL_corner = (45.85, -121.65),
-        LR_corner = (45.50, -121.19),
         buffer = parameters.buffer
-    output:
-        demfile = "phase_0_fetch/out/{name}/dem.tif",
+    input:
         extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    output:
+        demfile = "phase_0_fetch/out/{name}/dem.tif"
     script:
-        "phase_0_fetch/src/download_dem_bounding_box.py"
+        "phase_0_fetch/src/download_dem.py"
 
 # Creates a grayscale height map and texture map for Blender to render.
 # The height map is used to determine how high the landscape should be 

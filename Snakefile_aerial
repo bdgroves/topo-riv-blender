@@ -11,19 +11,28 @@ rule all:
     input:
         "phase_2_visualize/out/render_kingspeak.png"
 
-# Downloads a digital elevation model within bounding box
+# Make the bounding box
+rule make_bounding_box:
+    params:
+        UL_corner = [41.75, -111.5],
+        LR_corner = [39.25, -109.0],
+    output:
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    script:
+        "phase_0_fetch/src/make_bounding_box.py"
+
+# Downloads a digital elevation model within extent 
 rule download_dem:
     params:
         dem_product = parameters.dem_product,
-        UL_corner = [41.75, -111.5],
-        LR_corner = [39.25, -109.0],
         render_pixels = parameters.res_x * parameters.res_y,
         buffer = parameters.buffer
-    output:
-        demfile = "phase_0_fetch/out/{name}/dem.tif",
+    input:
         extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    output:
+        demfile = "phase_0_fetch/out/{name}/dem.tif"
     script:
-        "phase_0_fetch/src/download_dem_bounding_box.py"
+        "phase_0_fetch/src/download_dem.py"
 
 # Downloads aerial imagery within extent
 target_asset_keys = ["sur_refl_b01", "sur_refl_b04", "sur_refl_b03"]
