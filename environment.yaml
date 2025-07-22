@@ -17,5 +17,6 @@ dependencies:
   - utm=0.7.0
   - bmi-topography=0.9.0
   - planetary-computer=1.0.0
+  - proj-data=1.22
   - pip:
     - pystac-client==0.8.6
