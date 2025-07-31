@@ -57,6 +57,8 @@ def setup_blender_data(
     river_color,
     river_width,
     river_width_coefficient,
+    river_scale_boolean,
+    river_scale_coefficient,
     min_res,
     dimensions_file,
     heightmap_file,
@@ -129,6 +131,8 @@ def setup_blender_data(
         width of the river
     river_width_coefficient: float
         coefficient in the auto river width algorithm, default is 2.2
+    river_width_coefficient: float
+        coefficient in the auto river width algorithm for scaling rivers based on stream order, default is 0.5
     min_res: int
         minimum pixel resolution of the short side of the image
     dimensions_file: string
@@ -208,11 +212,13 @@ def setup_blender_data(
     # Load flowlines if exists
     if flowlines_shpfile != "NULL":
         flowlines = gpd.read_file(flowlines_shpfile).to_crs(map_crs)
-        flowlines = gpd.clip(flowlines.make_valid(), extent_shp)
+        flowlines["geometry"] = flowlines.make_valid()
+        flowlines = gpd.clip(flowlines, extent_shp)
 
     # Load waterbody is exists
     if waterbody_shpfile != "NULL":
         waterbody = gpd.read_file(waterbody_shpfile).to_crs(map_crs)
+        waterbody["geometry"] = waterbody.make_valid()
         waterbody = gpd.clip(waterbody.make_valid(), extent_shp)
 
     # If there is ocean in the domain, we will splice together two colormaps
@@ -455,6 +461,15 @@ def setup_blender_data(
 
         # Draw Flowlines
         if flowlines_shpfile != "NULL":
+            # Get minimum stream order
+            if river_scale_boolean == True:
+                min_stream_order = flowlines["StreamOrde"].min()
+                river_scale = np.exp(
+                    (flowlines["StreamOrde"] - min_stream_order)
+                    * river_scale_coefficient
+                )
+            else:
+                river_scale = 1.0
 
             # Automatic NHD drawing parameters
             if river_width == "auto":
@@ -465,7 +480,8 @@ def setup_blender_data(
                     * np.exp(
                         -0.00001
                         * np.sqrt((buff_east - buff_west) * (buff_north - buff_south))
-                    ),
+                    )
+                    * river_scale,
                     zorder=2,
                 )
 
@@ -587,6 +603,12 @@ if __name__ == "__main__":
     river_width_coefficient = snakemake_type_exists(
         snakemake.params, "river_width_coefficient", 2.2
     )
+    river_scale_boolean = snakemake_type_exists(
+        snakemake.params, "river_scale_boolean", False
+    )
+    river_scale_coefficient = snakemake_type_exists(
+        snakemake.params, "river_scale_coefficient", 0.25
+    )
     min_res = snakemake_type_exists(snakemake.params, "min_res", 2000)
 
     # Gather the Snakemake Inputs
@@ -653,6 +675,8 @@ if __name__ == "__main__":
         river_color,
         river_width,
         river_width_coefficient,
+        river_scale_boolean,
+        river_scale_coefficient,
         min_res,
         dimensions_file,
         heightmap_file,
