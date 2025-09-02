@@ -67,12 +67,12 @@ sun_intensity = 0.5  # sun intensity
 sun_strength = 1.0  # sun strength
 
 ########## landscape representation ###########
-min_res = 2000  # minimum resolution of the height map
-number_of_subdivisions = 2000  # number of subdivisions, more increases the detail
+min_res = 2000  # minimum resolution of the height map, larger value increases detail but takes longer to render
+number_of_subdivisions = 2000  # number of subdivisions, larger value increases detail but takes longer to render
 exaggeration = 5.0  # vertical exaggeration
 displacement_method = "DISPLACEMENT"  # "BOTH" #for more exaggerated shadows
 
 ########## render settings ##########
-res_x = 2000  # x resolution of the render
-res_y = 940  # y resolution of the render
-samples = 10  # number of samples that decides how "good" the render looks. more is better but takes longer
+res_x = 2000  # x resolution of the render, larger value increases detail but takes longer to render
+res_y = 940  # y resolution of the render, larger value increases detail but takes longer to render
+samples = 10  # number of samples that decides how "good" the render looks, larger value increases detail but takes longer to render
