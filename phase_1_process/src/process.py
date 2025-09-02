@@ -329,7 +329,7 @@ def setup_blender_data(
                     project(aerialfiles[2], map_crs, tmp_dir)
                 )
 
-                # Covert NaN to min value
+                # Convert NaN to min value
                 proj_aerial_r[proj_aerial_r == nan_r] = min_aerial_r
                 proj_aerial_g[proj_aerial_g == nan_g] = min_aerial_g
                 proj_aerial_b[proj_aerial_b == nan_b] = min_aerial_b

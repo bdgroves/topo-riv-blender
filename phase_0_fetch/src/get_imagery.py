@@ -219,7 +219,7 @@ def get_imagery(
     end_query,
     suffix,
 ):
-    """Gets imagery for a from PlanetaryComputer
+    """Gets imagery from PlanetaryComputer
 
     Parameters
     ----------

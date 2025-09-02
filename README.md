@@ -246,7 +246,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - There is an example workflow (`snakemake --cores 1 -s Snakefile_aerial`) that pulls MODIS data using a STAC API. Using the same STAC API, you also have access to Landsat, Sentinel, and other data products. See more in this [Planetary Computer Data Catalog](https://planetarycomputer.microsoft.com/catalog).
 
 <div align="center">
-    <img src="images/render_kingspeak.png" alt="render custom example of the mt. fuji" width="100%">
+    <img src="images/render_kingspeak.png" alt="render custom example of the kings peak" width="100%">
     <p> <b>Figure 10</b>: <em>Example custom render of Kings Peak in Northeast Utah with MODIS satellite imagery.</em></p>
 </div>
 
