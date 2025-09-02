@@ -335,6 +335,7 @@ def setup_blender_data(
                 proj_aerial_b[proj_aerial_b == nan_b] = min_aerial_b
 
                 # make rgb array
+                # Scale the rgb bands from their minimum to maximum value to aid in viewing
                 proj_aerial_rgb = np.stack(
                     (
                         (proj_aerial_r - min_aerial_r) / (max_aerial_r - min_aerial_r),
