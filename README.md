@@ -292,17 +292,33 @@ LR_corner = (45.50, -121.19),
 ```
 
 - These are the upper left corner (`UL_corner`) and lower right corner (`LR_corner`) coordinates (latitude, lontitude in decimal degrees). A simple way to find the location is to use [Google Maps](https://www.google.com/maps).
-- Simply right-click a point, copy the coordinates in the context menu, and paste them between the brackets. Rerun the `snakemake` command, and the workflow will make an image for your new location. 
+- Simply right-click a point, copy the coordinates in the context menu, and paste them between the brackets.
 
 ```python
 UL_corner = (40.33, -77.75),
 LR_corner = (40.11, -77.43),
 ```
 
-You’ll get this image of Tuscarora State Forest!
+- Next, you'll want to change the output filename in the `rule all`:
+
+```python
+rule all:
+    input:
+        "phase_2_visualize/out/render_columbiariver.png",
+```
+
+- The new coordinates correspond to an area in the Tuscarora State Forest, so let's change the name of the output filename.
+
+```python
+rule all:
+    input:
+        "phase_2_visualize/out/render_tuscarora.png",
+```
+
+- Rerun the `snakemake` command, and the workflow will make an image for your new location!
 
 <div align="center">
-    <img src="images/render_tuscarora.webp" alt="render custom example of the columbia river" width="100%">
+    <img src="images/render_tuscarora.webp" alt="render custom example of the tuscarora state forest" width="100%">
     <p> <b>Figure 14</b>: <em>Example custom render of the Tuscarora State Forest.</em></p>
 </div>
 
