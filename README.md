@@ -1,4 +1,4 @@
-# TopoRivBlender <img src="images/render_thumbnail.png" align="right" alt="" width="400" />
+# TopoRivBlender <img src="images/render_thumbnail.webp" align="right" alt="" width="400" />
 
 *A data pipeline for fetching, processing, and visualizing topographic and hydrographic data*
 
@@ -29,7 +29,7 @@ After installing the requirements, you should be able to make custom rendered im
 
 <a name="fig1"></a>
 <div align="center">
-    <img src="images/render_02050302.png" alt="render example" width="80%">
+    <img src="images/render_02050302.webp" alt="render example" width="80%">
     <p> <b>Figure 1</b>: <em>Example render of Upper Juniata in Central Pennsylvania using USGS 3DEP 10m (HUC: 02050302).</em></p>
 </div>
 
@@ -92,7 +92,7 @@ To make a rendered image, this code requires a single command: `snakemake --core
 In the example below, we will explain the workflow for making <a href="#fig1">Figure 1</a> (HUC8: 02050302, the Upper Juniata in Central Pennsylvania). This workflow is executed by running: `snakemake --cores 1 phase_2_visualize/out/render_02050302.png`. On my MacBook Pro (M2 Max chip) the pipeline took ~2 minutes to run. Depending on your specific hardware a single fetch, process, and render step should not take longer than 5 minutes. For other HUCs, you can specify snakemake to make a rendered image of a HUC like this, but alternatively, you can change the list of outputs in `rule all` in the `Snakefile`. **Note**: For clarity, some of the additional parameters and files are omitted from the description below.
 
 <div align="center">
-    <img src="images/dag_readme.png" alt="render example of HUC 02050302" width="50%">
+    <img src="images/dag_readme.webp" alt="render example of HUC 02050302" width="50%">
     <p> <b>Figure 2</b>: <em> The Directed Acyclic Graph of the TopoRivBlender workflow for generating the render of HUC: 02050302.</em></p>
 </div>
    
@@ -128,12 +128,12 @@ In the example below, we will explain the workflow for making <a href="#fig1">Fi
 - *Output*: [`phase_1_process/out/02050302/heightmap.tif`, `phase_1_process/out/02050302/texturemap.tif`]
 
 <div align="center">
-    <img src="images/02050302/heightmap.png" alt="height map example" width="40%">
+    <img src="images/02050302/heightmap.webp" alt="height map example" width="40%">
     <p> <b>Figure 3</b>: <em>Example height map of Upper Juniata in Central Pennsylvania using USGS 3DEP 10m (HUC: 02050302). Dark shades are low elevation, and lighter shades are higher elevation.</em></p>
 </div>
 
 <div align="center">
-    <img src="images/02050302/texturemap.png" alt="texture map example" width="40%">
+    <img src="images/02050302/texturemap.webp" alt="texture map example" width="40%">
     <p> <b>Figure 4</b>: <em>Example texture map of Upper Juniata in Central Pennsylvania using USGS 3DEP 10m (HUC: 02050302).</em></p>
 </div>
 
@@ -146,7 +146,7 @@ In the example below, we will explain the workflow for making <a href="#fig1">Fi
 - *Output*: `phase_2_visualize/out/render_02050302.png`
 
 <div align="center">
-    <img src="images/render_02050302.png" alt="render example of HUC 02050302"  width="50%">
+    <img src="images/render_02050302.webp" alt="render example of HUC 02050302"  width="50%">
     <p> <b>Figure 5</b> (same as <a href="#fig1">Figure 1</a>): <em>Example render of Upper Juniata in Central Pennsylvania using USGS 3DEP 10m (HUC: 02050302)</em></p>
 </div>
 
@@ -214,7 +214,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - Like this: `snakemake --cores 1 phase_2_visualize/out/render_14010001.png` or you can change the filenames in `rule all`.
 
 <div align="center">
-    <img src="images/render_14010001.png" alt="render example of HUC 14010001"  width="50%">
+    <img src="images/render_14010001.webp" alt="render example of HUC 14010001"  width="50%">
     <p> <b>Figure 6</b>: <em>Example render of HUC: 14010001.</em></p>
 </div>
 
@@ -222,12 +222,12 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - Like this: `snakemake --cores 1 phase_2_visualize/out/render_14010002.png phase_2_visualize/out/render_14010003.png` or you can change the filenames in `rule all`.
 
 <div align="center">
-    <img src="images/render_14010002.png" alt="render example of HUC 14010002" width="50%">
+    <img src="images/render_14010002.webp" alt="render example of HUC 14010002" width="50%">
     <p> <b>Figure 7</b>: <em>Example render of HUC: 14010002.</em></p>
 </div>
 
 <div align="center">
-    <img src="images/render_14010003.png" alt="render example of HUC 1401000" width="50%">
+    <img src="images/render_14010003.webp" alt="render example of HUC 1401000" width="50%">
     <p> <b>Figure 8</b>: <em>Example render of HUC: 14010003.</em></p>
 </div>
 
@@ -235,7 +235,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - Like this: `snakemake --cores 1 phase_2_visualize/out/render_14010001and14010002and14010003.png` or you can change the filenames in `rule all`.
   
 <div align="center">
-    <img src="images/render_14010001and14010002and14010003.png" alt="render example HUC 14010001 + 14010002 + 14010003" width="50%">
+    <img src="images/render_14010001and14010002and14010003.webp" alt="render example HUC 14010001 + 14010002 + 14010003" width="50%">
     <p> <b>Figure 9</b>: <em>Example combined render of HUCs: 14010001, 14010002, and 14010003.</em></p>
 </div>
 
@@ -252,7 +252,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - There is an example workflow (`snakemake --cores 1 -s Snakefile_aerial`) that pulls MODIS data using a STAC API. Using the same STAC API, you also have access to Landsat, Sentinel, and other data products. See more in this [Planetary Computer Data Catalog](https://planetarycomputer.microsoft.com/catalog).
 
 <div align="center">
-    <img src="images/render_kingspeak.png" alt="render custom example of the kings peak" width="100%">
+    <img src="images/render_kingspeak.webp" alt="render custom example of the kings peak" width="100%">
     <p> <b>Figure 10</b>: <em>Example custom render of Kings Peak in Northeast Utah with MODIS satellite imagery.</em></p>
 </div>
 
@@ -261,14 +261,14 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
   
 <a name="fig11"></a>
 <div align="center">
-    <img src="images/render_columbiariver.png" alt="render custom example of the columbia river" width="100%">
+    <img src="images/render_columbiariver.webp" alt="render custom example of the columbia river" width="100%">
     <p> <b>Figure 11</b>: <em>Example custom render of the Columbia River.</em></p>
 </div>
 
 - This is the output of `snakemake --cores 1 -s Snakefile_global`:
 
 <div align="center">
-    <img src="images/render_mtfuji.png" alt="render custom example of the mt. fuji" width="100%">
+    <img src="images/render_mtfuji.webp" alt="render custom example of the mt. fuji" width="100%">
     <p> <b>Figure 12</b>: <em>Example custom render of Mt. Fuji in Japan with Landsat satellite imagery. This is an example of how to label your renders.</em></p>
 </div>
 
@@ -279,7 +279,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - You can create this render with `snakemake --cores 1 -s Snakefile_lake`.
 
 <div align="center">
-    <img src="images/render_lakebaikal.png" alt="render custom example of lake baikal" width="50%">
+    <img src="images/render_lakebaikal.webp" alt="render custom example of lake baikal" width="50%">
     <p> <b>Figure 13</b>: <em>Example custom render of Lake Baikal.</em></p>
 </div>
 
@@ -302,7 +302,7 @@ LR_corner = (40.11, -77.43),
 You’ll get this image of Tuscarora State Forest!
 
 <div align="center">
-    <img src="images/render_tuscarora.png" alt="render custom example of the columbia river" width="100%">
+    <img src="images/render_tuscarora.webp" alt="render custom example of the columbia river" width="100%">
     <p> <b>Figure 14</b>: <em>Example custom render of the Tuscarora State Forest.</em></p>
 </div>
 
@@ -317,7 +317,7 @@ You’ll get this image of Tuscarora State Forest!
 - Below, we will show you how to modify the final render in the `Snakefile_contour` workflow. After running `snakemake --cores 1 -s Snakefile_contour`, a Blender window will automatically open. You will greeted with the following window:
 
 <div align="center">
-    <img src="images/blender_ui.png" alt="adjusting the exaggeration in realtime" width="100%">
+    <img src="images/blender_ui.webp" alt="adjusting the exaggeration in realtime" width="100%">
     <p> <b>Figure 15</b>: <em>The Blender GUI. (A) The 3D viewport of the camera. (B) Use these options to view a non-rendered view (left) or a rendered view (right). (C) The scene collection containing the different objects and the camera. (D) The properties of the scene. Screenshot shows the properties for the location, rotation, and scale of the topography.</em></p>
 </div>
 
