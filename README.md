@@ -27,9 +27,9 @@ TopoRivBlender is a `python` pipeline for creating of 3D visualization of topogr
 
 After installing the requirements, you should be able to make custom rendered images with a single command in a couple of minutes. This repository is meant to be a starting place; my hope is that you take this pipeline and use it for your own projects without much fuss.
 
+<a name="fig1"></a>
 <div align="center">
     <img src="images/render_02050302.png" alt="render example" width="80%">
-    <a name="fig1"></a>
     <p> <b>Figure 1</b>: <em>Example render of Upper Juniata in Central Pennsylvania using USGS 3DEP 10m (HUC: 02050302).</em></p>
 </div>
 
@@ -259,9 +259,9 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 #### How much can I customize my renders with this pipeline?
 - While I encourage you to fork your own version of this code to start playing with Blender, you can still make some neat renders with the pipeline in its current state. This is the output of `snakemake --cores 1 -s Snakefile_contour`:
   
+<a name="fig11"></a>
 <div align="center">
     <img src="images/render_columbiariver.png" alt="render custom example of the columbia river" width="100%">
-    <a name="fig11"></a>
     <p> <b>Figure 11</b>: <em>Example custom render of the Columbia River.</em></p>
 </div>
 
