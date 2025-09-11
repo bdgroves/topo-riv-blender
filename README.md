@@ -29,6 +29,7 @@ After installing the requirements, you should be able to make custom rendered im
 
 <div align="center">
     <img src="images/render_02050302.png" alt="render example" width="80%">
+    <a name="fig1"></a>
     <p> <b>Figure 1</b>: <em>Example render of Upper Juniata in Central Pennsylvania using USGS 3DEP 10m (HUC: 02050302).</em></p>
 </div>
 
@@ -88,7 +89,7 @@ To make a rendered image, this code requires a single command: `snakemake --core
 2. In the `Snakefile`, we specify many **rules**, which are steps in the code. For each rule, a subcommand is executed to take specified input files and make output files.
 3. The first rule, `rule all`, is a special rule. This is the final expected output that we want the `snakemake` pipeline to make. In the `Snakefile`, the final outputs are the rendered images `phase_2_visualize/out/render_140100.png`, `phase_2_visualize/out/render_02050302.png`, and `phase_2_visualize/out/render_070400030309.png`. When you run `snakemake --cores 1`, `snakemake` will recognize that these images do not exist and will then work backwards to find all the inputs necessary to make them. If those inputs don't exist, it keeps working backwards until it has everything it needs.
 
-In the example below, we will explain the workflow for making ***Figure 1*** (HUC8: 02050302, the Upper Juniata in Central Pennsylvania). This workflow is executed by running: `snakemake --cores 1 phase_2_visualize/out/render_02050302.png`. On my MacBook Pro (M2 Max chip) the pipeline took ~2 minutes to run. Depending on your specific hardware a single fetch, process, and render step should not take longer than 5 minutes. For other HUCs, you can specify snakemake to make a rendered image of a HUC like this, but alternatively, you can change the list of outputs in `rule all` in the `Snakefile`. **Note**: For clarity, some of the additional parameters and files are omitted from the description below.
+In the example below, we will explain the workflow for making <a href="#fig1">Figure 1</a> (HUC8: 02050302, the Upper Juniata in Central Pennsylvania). This workflow is executed by running: `snakemake --cores 1 phase_2_visualize/out/render_02050302.png`. On my MacBook Pro (M2 Max chip) the pipeline took ~2 minutes to run. Depending on your specific hardware a single fetch, process, and render step should not take longer than 5 minutes. For other HUCs, you can specify snakemake to make a rendered image of a HUC like this, but alternatively, you can change the list of outputs in `rule all` in the `Snakefile`. **Note**: For clarity, some of the additional parameters and files are omitted from the description below.
 
 <div align="center">
     <img src="images/dag_readme.png" alt="render example of HUC 02050302" width="50%">
@@ -146,12 +147,12 @@ In the example below, we will explain the workflow for making ***Figure 1*** (HU
 
 <div align="center">
     <img src="images/render_02050302.png" alt="render example of HUC 02050302"  width="50%">
-    <p> <b>Figure 5</b> (same as Figure 1): <em>Example render of Upper Juniata in Central Pennsylvania using USGS 3DEP 10m (HUC: 02050302)</em></p>
+    <p> <b>Figure 5</b> (same as <a href="#fig1">Figure 1</a>): <em>Example render of Upper Juniata in Central Pennsylvania using USGS 3DEP 10m (HUC: 02050302)</em></p>
 </div>
 
 ## The parameters file
 
-A parameters file is saved in the `blender_parameters` folder and contains many of the options that determine the look of your final render.
+A parameters file is saved in the `blender_parameters` folder and contains many of the options that determine the look of your final render. Below is a breakdown of the variety of parameters available and their definitions, organized by category.
 
 #### Data Management
 - `dem_product`: The specific DEM product to be downloaded from Open Topography's [API](https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets). Use `auto` to have the code automatically determine the coarsest DEM that will still maintain good image fidelity.
@@ -260,6 +261,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
   
 <div align="center">
     <img src="images/render_columbiariver.png" alt="render custom example of the columbia river" width="100%">
+    <a name="fig11"></a>
     <p> <b>Figure 11</b>: <em>Example custom render of the Columbia River.</em></p>
 </div>
 
@@ -302,7 +304,7 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
     <p> <b>Figure 15</b>: <em>Adjusting the scale of the topography with the Blender GUI.</em></p>
 </div>
 
-- The GIF above does not look nearly as pretty as the final rendered image [Figure 11]. That's because the scene has not been rendered. To see a preview of what the render may look like, select the `Rendered` mode (B). Adjusting the lighting with the Blender GUI requires you to wait a few seconds for to re-render the scene. The image becomes fuzzy because there a too few samples to render the whole image. Over time, with more samples, the render becomes clearer.
+- The GIF above does not look nearly as pretty as the final rendered image <a href="#fig11">Figure 11</a>. That's because the scene has not been rendered. To see a preview of what the render may look like, select the `Rendered` mode (B). Adjusting the lighting with the Blender GUI requires you to wait a few seconds for to re-render the scene. The image becomes fuzzy because there a too few samples to render the whole image. Over time, with more samples, the render becomes clearer.
 
 <div align="center">
     <img src="images/light_mod.gif" alt="adjusting the lighting in realtime" width="50%">
