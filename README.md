@@ -20,9 +20,9 @@
 
 ## Introduction
 
-TopoRivBlender is a `python` pipeline for creating of 3D visualizations with realistic lighting (see below). It aims to streamline two common bottlenecks:
+TopoRivBlender is a `python` pipeline for creating of 3D visualization of topography and hydrography with realistic lighting (see below). It aims to streamline two common bottlenecks:
 
-1. The retrieval and processing of [topographic](https://www.usgs.gov/faqs/what-a-digital-elevation-model-dem) and [hydrographic](https://www.usgs.gov/faqs/what-national-hydrography-dataset-nhd#:~:text=The%20National%20Hydrography%20Dataset%20(NHD)%20is%20a%20digital%20vector%20dataset,%2C%20streams%2C%20rivers%2C%20canals%2C)
+1. The retrieval and processing of [topographic](https://www.usgs.gov/faqs/what-a-digital-elevation-model-dem) and [hydrographic](https://www.usgs.gov/faqs/what-national-hydrography-dataset-nhd#:~:text=The%20National%20Hydrography%20Dataset%20(NHD)%20is%20a%20digital%20vector%20dataset,%2C%20streams%2C%20rivers%2C%20canals%2C) information
 2. Creation of the 3D render in [Blender](https://www.blender.org/download/), an free, open source 3D visualization program.
 
 After installing the requirements, you should be able to make custom rendered images with a single command in a couple of minutes. This repository is meant to be a starting place; my hope is that you take this pipeline and use it for your own projects without much fuss.
@@ -58,17 +58,22 @@ After installing the requirements, you should be able to make custom rendered im
     - Paste `export PATH=$PATH:"/c/Program Files/Blender Foundation/Blender 4.4"`. NOTE: Adjust the directory based on where Blender installed on your machine. Also make sure to adjust the version number accordingly.
 5. Check that you can access both `conda` and `Blender` by typing them in Git Bash.
 
+#### Download TopoRivBlender
+
+1. Fork, clone, or download a zipped version of this repository.
+2. Create a directory, `path/to/topo-riv-blender`, and place the contents of this repository in the directory.
+
 #### Get an API key from OpenTopography
 
-4. Request an API Key from [Open Topography](https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets)
-5. Create a .txt file named opentopography_api_key.txt in `path/to/topo-riv-blender` and paste your api key in it.
+1. Request an API Key from [Open Topography](https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets)
+2. Create a .txt file named opentopography_api_key.txt in `path/to/topo-riv-blender` and paste your api key in it.
 
 #### Set up the conda environment
 
-6. In the terminal (or Miniforge Prompt in Windows) change directories to the project directory with `cd path/to/topo-riv-blender`
-7. Create the `conda` environment with the `environment.yaml` file.
+1. In the terminal (or Miniforge Prompt in Windows) change directories to the project directory with `cd path/to/topo-riv-blender`
+2. Create the `conda` environment with the `environment.yaml` file.
     Run `conda env create -f environment.yaml`
-8. Activate the conda environment.
+3. Activate the conda environment.
     Run `conda activate topo-riv-blender`
 
 ## How does it work?
