@@ -59,6 +59,7 @@ def setup_blender_data(
     river_width_coefficient,
     river_scale_boolean,
     river_scale_coefficient,
+    waterbody_colors,
     min_res,
     dimensions_file,
     heightmap_file,
@@ -133,6 +134,8 @@ def setup_blender_data(
         coefficient in the auto river width algorithm, default is 2.2
     river_width_coefficient: float
         coefficient in the auto river width algorithm for scaling rivers based on stream order, default is 0.5
+    waterbody_colors: list of colors (named color strings, hexcodes, or rgba tuples)
+        list of colors of the waterbodies: playa, icemass, lakepond, reservoir, swampmarsh, esturary
     min_res: int
         minimum pixel resolution of the short side of the image
     dimensions_file: string
@@ -219,7 +222,7 @@ def setup_blender_data(
     if waterbody_shpfile != "NULL":
         waterbody = gpd.read_file(waterbody_shpfile).to_crs(map_crs)
         waterbody["geometry"] = waterbody.make_valid()
-        waterbody = gpd.clip(waterbody.make_valid(), extent_shp)
+        waterbody = gpd.clip(waterbody, extent_shp)
 
     # If there is ocean in the domain, we will splice together two colormaps
     # One for the topography and one for the ocean floor.
@@ -494,7 +497,18 @@ def setup_blender_data(
 
         # Draw water bodies
         if waterbody_shpfile != "NULL":
-            waterbody.plot(ax=ax_texturemap, color=river_color, linewidth=0, zorder=2)
+            # FTYPE codes for Playa, Ecemass, LakePond, Reservior, SwampMarsh, Esturary
+            FTYPE_codes = [361, 378, 390, 436, 466, 493]
+
+            # Subset the waterbody geodatabase to the FTYPE codes and color accordingly
+            for waterbody_int, waterbody_color in enumerate(waterbody_colors):
+                sub_waterbody = waterbody[
+                    waterbody["FTYPE"] == FTYPE_codes[waterbody_int]
+                ]
+                if sub_waterbody.empty == False:
+                    sub_waterbody.plot(
+                        ax=ax_texturemap, color=waterbody_color, linewidth=0, zorder=2
+                    )
 
         # Mask area outside the extent
         if mask_boolean == True:
@@ -610,6 +624,18 @@ if __name__ == "__main__":
     river_scale_coefficient = snakemake_type_exists(
         snakemake.params, "river_scale_coefficient", 0.25
     )
+    waterbody_colors = snakemake_type_exists(
+        snakemake.params,
+        "waterbody_colors",
+        [
+            (0.824, 0.706, 0.549, 0.75),
+            (1.0, 1.0, 1.0, 0.75),
+            river_color,
+            river_color,
+            "#3a4c40",
+            river_color,
+        ],
+    )
     min_res = snakemake_type_exists(snakemake.params, "min_res", 2000)
 
     # Gather the Snakemake Inputs
@@ -678,6 +704,7 @@ if __name__ == "__main__":
         river_width_coefficient,
         river_scale_boolean,
         river_scale_coefficient,
+        waterbody_colors,
         min_res,
         dimensions_file,
         heightmap_file,
