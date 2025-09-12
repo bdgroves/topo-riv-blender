@@ -248,6 +248,13 @@ def setup_blender_data(
         # Determine how much proportion of the relief is above ground
         proportion_above_ground = (max_dem - ocean_elevation) / (max_dem - min_dem)
 
+        if proportion_above_ground < 0.0 or proportion_above_ground > 1.0:
+            import sys
+
+            sys.exit(
+                "Check the 'ocean_elevation' parameter. It does not lie between the minimum and maximum elevations of the DEM."
+            )
+
         # 8 bit portion below water
         cmap1_length = 256 - int(round(proportion_above_ground * 256))
         # 8 bit portion above water
