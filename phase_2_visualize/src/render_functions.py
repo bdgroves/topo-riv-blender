@@ -289,7 +289,7 @@ def setup_layer(layer, dimensions_file, data_folder):
     layer_mat.node_tree.nodes["Material Output"].location = (300, 0)
 
 
-def make_platform(loc, platform_size_x, platform_size_y, arpon_file, name):
+def make_platform(loc, platform_size_x, platform_size_y, apron_file, name):
     """Sets up the platform node in blender
 
     Parameters
@@ -300,7 +300,7 @@ def make_platform(loc, platform_size_x, platform_size_y, arpon_file, name):
         x-width of platform
     platform_size_y: float
         y-width of platform
-    arpon_file: string
+    apron_file: string
         path to apron file containing the texture map (i.e., color of the background)
     name:
         name of the platform node
@@ -312,7 +312,7 @@ def make_platform(loc, platform_size_x, platform_size_y, arpon_file, name):
     """
 
     # load apron map
-    color_image = bpy.data.images.load(parent + "/" + arpon_file)
+    color_image = bpy.data.images.load(parent + "/" + apron_file)
 
     # set platform
     platform_mesh = bpy.ops.mesh.primitive_plane_add(size=params.plane_size)
@@ -375,7 +375,7 @@ def get_v_scale(exaggeration, x_length, y_length, relief):
 
     """
     # auto calculation of exaggeration
-    if params.exaggeration == "auto":
+    if exaggeration == "auto":
         R = relief / np.sqrt(x_length * y_length)
         return (
             (1.0 + 4.0 * np.exp(-200.0 * R))
@@ -384,9 +384,7 @@ def get_v_scale(exaggeration, x_length, y_length, relief):
             / max(x_length, y_length)
         )
     else:
-        return (
-            params.exaggeration * params.plane_size * relief / max(x_length, y_length)
-        )
+        return exaggeration * params.plane_size * relief / max(x_length, y_length)
 
 
 def get_dimensions(dimensions_file, width, height):
@@ -470,7 +468,7 @@ def sample_texture_at_coords(displacement_image, width, height, norm_x, norm_y):
 def add_pin(
     norm_x, norm_y, dimensions_file, displacement_file, label, pin_color, label_color
 ):
-    """Adds the pin and label to the blende scene
+    """Adds the pin and label to the blender scene
 
     Parameters
     ----------
@@ -517,7 +515,7 @@ def add_pin(
     if width / height > 1.0:
         norm_y *= height / width
     else:
-        norm_x = width / height
+        norm_x *= width / height
 
     label_collection = bpy.data.collections.new(label)
     bpy.context.scene.collection.children.link(label_collection)
@@ -626,7 +624,7 @@ def add_pin(
     except:
         print("using default font")
 
-    # add matetial
+    # add material
     setmaterial.inputs["Material"].default_value = label_mat
 
     # connect nodes

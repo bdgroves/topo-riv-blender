@@ -1,0 +1,91 @@
+# Render Parameters File
+module_name = "blender_parameters.blender_params_thumbnail"
+
+# Import parameters file
+import os, sys, importlib
+render_params = module_name.replace(".", os.sep) + ".py"
+parameters = importlib.import_module(module_name)
+
+square = 0.06
+aspect = 1.25755052918
+UL_corner_specify = [37.36615071600088, -110.8944504506659]
+
+# Define the final output
+rule all:
+    input:
+        "phase_2_visualize/out/render_thumbnail.png",
+
+# Make the bounding box
+rule make_bounding_box:
+    params:
+        UL_corner =[UL_corner_specify[0], UL_corner_specify[1]],
+        LR_corner = [UL_corner_specify[0]-square, UL_corner_specify[1]+square*aspect],
+    output:
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    script:
+        "phase_0_fetch/src/make_bounding_box.py"
+        
+# Downloads a digital elevation model within extent 
+rule download_dem:
+    params:
+        dem_product = parameters.dem_product,
+        buffer = parameters.buffer
+    input:
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    output:
+        demfile = "phase_0_fetch/out/{name}/dem.tif"
+    script:
+        "phase_0_fetch/src/download_dem.py"
+
+# Downloads NHD waterbody data within extent
+rule get_nhd_wb:
+    params:
+        nhd_type = parameters.nhd_waterbody,
+        render_pixels = parameters.res_x * parameters.res_y 
+    input:
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
+    output:
+        nhd_shpfile = "phase_0_fetch/out/{name}/waterbody.shp"
+    script:
+        "phase_0_fetch/src/get_nhd.py"
+
+# Creates a grayscale height map and texture map for Blender to render.
+# The height map is used to determine how high the landscape should be 
+# in the render, and the texture map determines the color of the landscape.
+rule create_heightmap_texturemap:
+    params:
+        map_crs = "EPSG:3857",
+        topo_cmap = parameters.topo_cmap,
+        buffer = parameters.buffer,
+        wall_thickness = 4.0,
+        wall_color = [0.4, 0.266, 0.133, 1.0],
+        background_color = [0.5, 0.5, 0.5, 1.0],
+        custom_min_dem = 600.0
+    input:
+        extent_shpfile = "phase_0_fetch/out/{name}/extent.shp",
+        demfile =  "phase_0_fetch/out/{name}/dem.tif",
+        waterbody_shpfile = "phase_0_fetch/out/{name}/waterbody.shp"
+    output:
+        dimensions_file = "phase_1_process/out/{name}/dimensions.npy",
+        heightmap_file = "phase_1_process/out/{name}/heightmap.png",
+        texturemap_file = "phase_1_process/out/{name}/texturemap.png",
+        apronmap_file = "phase_1_process/out/{name}/apronmap.png"
+    script:
+        "phase_1_process/src/process.py"
+       
+# Using the height map and texture map, Blender sets up the scene 
+# (topography, lighting, and camera) and renders a photorealistic image. 
+rule render:
+    input:
+        dimensions_file = "phase_1_process/out/{name}/dimensions.npy",
+        heightmap_file = "phase_1_process/out/{name}/heightmap.png",
+        texturemap_file = "phase_1_process/out/{name}/texturemap.png",
+        apronmap_file = "phase_1_process/out/{name}/apronmap.png",
+        blender_params = render_params
+    output:
+        output_file = "phase_2_visualize/out/render_{name}.png"
+    shell:
+        "Blender -b -P phase_2_visualize/src/render.py -- "
+        "{input.blender_params} "
+        "{input.dimensions_file} {input.heightmap_file} {input.texturemap_file} {input.apronmap_file} NULL "
+        "{output.output_file} "

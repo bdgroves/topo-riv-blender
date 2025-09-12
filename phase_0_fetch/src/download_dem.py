@@ -5,6 +5,9 @@ from bmi_topography import Topography
 import requests
 from osgeo import gdal
 import osgeo_utils.gdal_merge
+from shapely.geometry import box
+
+gdal.UseExceptions()
 
 
 def snakemake_type_exists(snakemake_type, string, default_input):
@@ -32,7 +35,7 @@ def snakemake_type_exists(snakemake_type, string, default_input):
 
 
 def get_shapefile_extent(shapefile):
-    """Gets a extent coodinates and the height + length according to a shapefile
+    """Gets the bounding box coordinates, height and length of the shapefile
 
     Parameters
     ----------
@@ -42,15 +45,15 @@ def get_shapefile_extent(shapefile):
     Returns
     -------
     west: float
-        west long coordinate
+        west (longitude) coordinate
     east: float
-        east long coordinate
+        east (longitude) coordinate
     length: float
         length of the total extent
     south: float
-        south lat coordinate
+        south (latitude) coordinate
     north: float
-        north lat coordinate
+        north (latitude) coordinate
     height: float
         height of the total extent
 
@@ -69,20 +72,21 @@ def get_shapefile_extent(shapefile):
 
 
 def buffer_shapefile(west, east, length, south, north, height, buffer):
-    """Gets a new extent coordinates according to a buffer
+    """Gets the extended bounding box coordinates, height, and
+    length after a adding a buffer to an input bounding box
 
     Parameters
     ----------
     west: float
-        west long coordinate
+        west (longitude) coordinate
     east: float
-        east long coordinate
+        east (longitude) coordinate
     length: float
         length of the total extent
     south: float
-        south lat coordinate
+        south (latitude) coordinate
     north: float
-        north lat coordinate
+        north (latitude) coordinate
     height: float
         height of the total extent
     buffer: float
@@ -91,13 +95,13 @@ def buffer_shapefile(west, east, length, south, north, height, buffer):
     Returns
     -------
     west: float
-        west long coordinate with buffer
+        west (longitude) coordinate with buffer
     east: float
-        east long coordinate with buffer
+        east (longitude) coordinate with buffer
     south: float
-        south lat coordinate with buffer
+        south (latitude) coordinate with buffer
     north: float
-        north lat coordinate with buffer
+        north (latitude) coordinate with buffer
 
     """
 
@@ -116,13 +120,13 @@ def estimate_area(west, east, south, north, render_pixels):
     Parameters
     ----------
     west: float
-        west long coordinate
+        west (longitude) coordinate
     east: float
-        east long coordinate
+        east (longitude) coordinate
     south: float
-        south lat coordinate
+        south (latitude) coordinate
     north: float
-        north lat coordinate
+        north (latitude) coordinate
     render_pixels: int
         number of pixels in the final render image, used to determine the dem resolution
 
@@ -134,7 +138,7 @@ def estimate_area(west, east, south, north, render_pixels):
     """
 
     # Radius of the Earth in kilometers
-    R = 6371.0  
+    R = 6371.0
 
     # Convert degrees to kilometers, y-distance
     height_km = (north - south) * (R * (np.pi / 180.0))
@@ -148,32 +152,39 @@ def estimate_area(west, east, south, north, render_pixels):
     return width_km * height_km * 1000000.0 / float(render_pixels)
 
 
-def determine_dem_product(
-    data_product, dem_product, west, east, south, north, render_pixels
-):
+def check_in_usa(west, east, south, north):
+    bounding_box_polygon = box(west, south, east, north)
+    usa_polygon = gpd.read_file("phase_0_fetch/in/usa_extent.geojson")
+
+    if any(
+        bounding_box_polygon.intersects(usa_polygon.iloc[0].geometry.geoms[i])
+        for i in range(len(usa_polygon.iloc[0].geometry.geoms))
+    ):
+        return True
+    else:
+        return False
+
+
+def determine_dem_product(dem_product, west, east, south, north, render_pixels):
     """Automatically determine the data and dem project based on the size of the extent and the number of pixels in the final render
 
     Parameters
     ----------
-    data_product: string
-        initial name of the data product used by the opentopography api
     dem_product: string
-        initial name of the dem product used by the opentopography api
+        name of the dem product used by the opentopography api
     west: float
-        west long coordinate
+        west (longitude) coordinate
     east: float
-        east long coordinate
+        east (longitude) coordinate
     south: float
-        south lat coordinate
+        south (latitude) coordinate
     north: float
-        north lat coordinate
+        north (latitude) coordinate
     render_pixels: int
         number of pixels in the final render image, used to determine the dem resolution
 
     Returns
     -------
-    data_product: string
-        automated name of the data product used by the opentopography api
     dem_product: string
         automated name of the dem product used by the opentopography api
 
@@ -188,53 +199,50 @@ def determine_dem_product(
         # Initialize switch from usgs to global as false
         switch_to_global = False
 
-        # Require either usgsdem or global dem
-        if data_product != "/API/usgsdem" and data_product != "/API/globaldem":
-            raise Exception(
-                "Incorrect data product. Please use '/API/usgsdem' or '/API/globaldem'."
-            )
+        # check is polygon is within USA extent
+        in_usa = check_in_usa(west, east, south, north)
 
         # Determine USGS dem product if usgsdem is chosen
-        if data_product == "/API/usgsdem":
+        if in_usa == True:
 
             # 3DEP 10m
             if area_m_per_pixel < 900.0:
-                return "/API/usgsdem", "USGS10m"
+                return "USGS10m"
 
-            # 3DEP 30m    
+            # 3DEP 30m
             elif 900.0 <= area_m_per_pixel and area_m_per_pixel < 8100.0:
-                return "/API/usgsdem", "USGS30m"
+                return "USGS30m"
 
             # Switch to global data, area per render pixel is too large
             else:
                 print(
-                    "This is a pretty large area, consider using data_product = '/API/globaldem' instead of '/API/usgsdem' next time. Switching to '/API/globaldem' for now."
+                    "This is a pretty large area, so we will use coarser global data."
                 )
-                switch_to_global = True 
+                switch_to_global = True
 
         # Determine global dem product if globaldem is chosen or switched to
-        if data_product == "/API/globaldem" or switch_to_global == True:
+        if in_usa != True or switch_to_global == True:
 
             # STRM 30m
             if area_m_per_pixel < 8100.0:
-                return "/API/globaldem", "SRTMGL1"
+                return "SRTMGL1"
 
             # STRM 90m
             elif 8100.0 <= area_m_per_pixel and area_m_per_pixel < 72900.0:
-                return "/API/globaldem", "SRTMGL3"
+                return "SRTMGL3"
 
             # STRM 500m + Bathymetry
             elif 72900.0 <= area_m_per_pixel and area_m_per_pixel < 2250000.0:
-                return "/API/globaldem", "SRTM15Plus"
+                return "SRTM15Plus"
 
             # GEDI DTM 1000m
             else:
                 print("You're using the coarsest DEM, this might be a lot of data.")
-                return "/API/globaldem", "GEDI_L3"
-    
+                return "GEDI_L3"
+
     # Return user-specified parameters
     else:
-        return data_product, dem_product
+        return dem_product
 
 
 def opentopography_api_download(params, demfile):
@@ -246,8 +254,6 @@ def opentopography_api_download(params, demfile):
         params for the api request
     demfile: string
         path of the dem file to be downloaded
-    data_product: string
-        name of the data product used by the opentopography api
     dem_product: string
         name of the dem product used by the opentopography api
 
@@ -274,7 +280,7 @@ def opentopography_api_download(params, demfile):
     # First try to download the DEM with the basic parameters
     try:
         topo_request.fetch()
-        
+
         # Rename the file
         os.rename(
             out_dir
@@ -294,10 +300,10 @@ def opentopography_api_download(params, demfile):
 
     # If you request a DEM that is too large, you'll need to download the dems in strips and then merge them.
     except requests.exceptions.HTTPError as e:
-        
+
         # If the error is status code 400, figure out how large the initial request was and the maximum requested area
         if e.response.status_code == 400:
-            print ("DEM is too large for one request, we have to download it in strips.")
+            print("DEM is too large for one request, we have to download it in strips.")
 
             err = e.response.text
 
@@ -319,18 +325,17 @@ def opentopography_api_download(params, demfile):
 
             # Make a temp directory to hold the dems strips
             tmp_dir = (
-                out_dir.replace("out", "tmp") + "/" + os.path.basename(demfile)[:-4]
+                out_dir.replace("/out", "/tmp") + "/" + os.path.basename(demfile)[:-4]
             )
             if not os.path.exists(tmp_dir):
                 os.makedirs(tmp_dir)
 
             # Get initial request parameters
-            data_product = params["data_type"]
             dem_product = params["dem_type"]
-            buff_west =  params["west"]
-            buff_south =  params["south"]
-            buff_east =  params["east"] 
-            buff_north =  params["north"]       
+            buff_west = params["west"]
+            buff_south = params["south"]
+            buff_east = params["east"]
+            buff_north = params["north"]
 
             # Calculate the number of strips needed to keep the area request under the max area
             strips = int(total_area / max_area) + 1
@@ -356,14 +361,13 @@ def opentopography_api_download(params, demfile):
 
                 # Only redownload if the strip doesn't exist. When dealing with large datasets this prevents the code from
                 # redownloading already retrieved data. However, this may cause issues if you download a huge dem and only
-                # change the extent slightly. 
+                # change the extent slightly.
                 if os.path.isfile(tmp_dir + "/dem_part_" + str(i) + ".tif") == False:
 
                     # Get Default parameter set from BMI-Topography
                     params = Topography.DEFAULT.copy()
 
                     # Set parameter values to user-defined settings
-                    params["data_type"] = data_product
                     params["dem_type"] = dem_product
                     params["output_format"] = "GTiff"
                     params["west"] = strip_left[i]
@@ -405,12 +409,12 @@ def opentopography_api_download(params, demfile):
                         tmp_dir + "/dem_part_" + str(i) + ".tif",
                     )
 
-                # Add path to dem strip path list    
+                # Add path to dem strip path list
                 dem_strips += [tmp_dir + "/dem_part_" + str(i) + ".tif"]
 
             # Use GDAL to open the first dem strip
             srs = gdal.Open(tmp_dir + "/dem_part_0.tif")
-            
+
             # Get the NaN value
             no_data_val = srs.GetRasterBand(1).GetNoDataValue()
 
@@ -435,7 +439,7 @@ def opentopography_api_download(params, demfile):
 
 
 def bmi_download_dem_extent(
-    extent_shpfile, demfile, data_product, dem_product, buffer, render_pixels
+    extent_shpfile, demfile, dem_product, buffer, render_pixels
 ):
     """Downloads a DEM (.tif) according to the extent of a shapefile.
 
@@ -445,8 +449,6 @@ def bmi_download_dem_extent(
         path of of the extent shapefile
     demfile: string
         path of the dem file to be downloaded
-    data_product: string
-        name of the data product used by the opentopography api
     dem_product: string
         name of the dem product used by the opentopography api
     buffer: float
@@ -460,7 +462,7 @@ def bmi_download_dem_extent(
 
     """
 
-    # Load extent shapefile
+    # Load extent shapefile, ensure it's in geographic coordinates
     shp = gpd.read_file(extent_shpfile).to_crs("EPSG:4326")
 
     # Get the boundaries of the extent files assuming a WGS84 CRS
@@ -472,8 +474,7 @@ def bmi_download_dem_extent(
     )
 
     # Determine the correct data and dem product if set to Auto-Mode
-    temp_data_product, temp_dem_product = determine_dem_product(
-        data_product,
+    temp_dem_product = determine_dem_product(
         dem_product,
         buff_west,
         buff_east,
@@ -481,13 +482,13 @@ def bmi_download_dem_extent(
         buff_north,
         render_pixels,
     )
-    print("Using " + temp_data_product + " with " + temp_dem_product)
+
+    print("Automatically chose " + temp_dem_product)
 
     # Get Default parameter set from BMI-Topography
     params = Topography.DEFAULT.copy()
 
     # Set parameter values to user-defined settings
-    params["data_type"] = temp_data_product
     params["dem_type"] = temp_dem_product
     params["output_format"] = "GTiff"
     params["west"] = buff_west
@@ -501,15 +502,10 @@ def bmi_download_dem_extent(
 
 
 if __name__ == "__main__":
-    data_product = snakemake_type_exists(
-        snakemake.params, "data_product", "/API/globaldem"
-    )
     dem_product = snakemake_type_exists(snakemake.params, "dem_product", "NASADEM")
     render_pixels = snakemake_type_exists(snakemake.params, "render_pixels", 1)
-    buffer =snakemake_type_exists(snakemake.params, "buffer", 1.0)
+    buffer = snakemake_type_exists(snakemake.params, "buffer", 1.0)
     extent_shpfile = snakemake.input["extent_shpfile"]
     demfile = snakemake.output["demfile"]
 
-    bmi_download_dem_extent(
-        extent_shpfile, demfile, data_product, dem_product, buffer, render_pixels
-    )
+    bmi_download_dem_extent(extent_shpfile, demfile, dem_product, buffer, render_pixels)

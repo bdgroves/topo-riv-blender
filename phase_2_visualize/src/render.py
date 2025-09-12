@@ -36,7 +36,7 @@ spec_params.loader.exec_module(params)
 dimensions_file = argv[1]
 displacement_file = argv[2]
 color_file = argv[3]
-arpon_file = argv[4]
+apron_file = argv[4]
 labels_file = argv[5]
 out_file = argv[6]
 data_folder = os.path.dirname(displacement_file)
@@ -52,7 +52,7 @@ bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.delete(use_global=False)
 
 ################################################################################
-# This sets the render enginer to CYCLES.
+# This sets the render engine to CYCLES.
 # In order for TopoBlender to render your topography correctly, you must use
 # this render engine. This engine is optimized for GPUs, so if your computer
 # lacks a GPU, TopoBlender may be slow.
@@ -99,16 +99,16 @@ else:
 
 # U & D platforms
 render_func.make_platform(
-    (0, displace_y, 0), ud_platform_x, ud_platform_y, arpon_file, "Apron_North"
+    (0, displace_y, 0), ud_platform_x, ud_platform_y, apron_file, "Apron_North"
 )
 render_func.make_platform(
-    (0, -displace_y, 0), ud_platform_x, ud_platform_y, arpon_file, "Apron_South"
+    (0, -displace_y, 0), ud_platform_x, ud_platform_y, apron_file, "Apron_South"
 )
 # L & R platforms
 render_func.make_platform(
-    (-displace_x, 0.0, 0), lr_platform_x, platform_y, arpon_file, "Apron_West"
+    (-displace_x, 0.0, 0), lr_platform_x, platform_y, apron_file, "Apron_West"
 )
-render_func.make_platform((displace_x, 0.0, 0), lr_platform_x, platform_y, arpon_file, "Apron_East")
+render_func.make_platform((displace_x, 0.0, 0), lr_platform_x, platform_y, apron_file, "Apron_East")
 
 ################################################################################
 # Add Pin

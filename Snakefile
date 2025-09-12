@@ -49,7 +49,6 @@ rule get_nhd_wb:
 # Downloads a digital elevation model within extent 
 rule download_dem:
     params:
-        data_product = parameters.data_product,
         dem_product = parameters.dem_product,
         buffer = parameters.buffer,
         render_pixels = parameters.res_x * parameters.res_y

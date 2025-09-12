@@ -1,9 +1,9 @@
+# For more details about the parameters, please refer to the README in the Github repository:
+# https://github.com/DOI-USGS/topo-riv-blender/blob/main/README.md
+
 ########## data management ##########
 # OpenTopography Products: https://portal.opentopography.org/apidocs/
-data_product = (
-    "/API/globaldem"  # Within US use'/API/usgsdem', Global use '/API/globaldem'
-)
-dem_product = "SRTM15Plus"#"GEBCOIceTopo"  # determine automatically
+dem_product = "SRTM15Plus"  # "GEBCOIceTopo"  # determine automatically
 buffer = 0.2  # buffer space around watershed
 
 ########## map visualization ##########
@@ -17,7 +17,7 @@ topo_nstops = [0, 200, 256]
 
 # "ocean" parameters
 oceanfloor_cmap = "bone"
-ocean_elevation = 455.5 #m
+ocean_elevation = 455.5  # m
 
 ########## render hardware ##########
 GPU_boolean = False  # if you have a GPU, set this to 1 and this will run faster
@@ -54,7 +54,7 @@ camera_distance = (
 camera_tilt = (
     45.0  # degrees from horizontal: 0.0 is profile view, 90.0 is planform view
 )
-camera_rotation = 150.0  # camera location degrees CW from North: 0.0 is North, 90.0 is East, 180.0, is South, and 270.0 is West.
+camera_rotation = 150.0  # camera location degrees clockwise from North: 0.0 is North, 90.0 is East, 180.0, is South, and 270.0 is West.
 
 # depth of field
 use_depth_of_field = False
@@ -63,17 +63,17 @@ f_stop = 100.0  # affects depths of field, lower for a shallow dof, higher for w
 
 ########## sun properties ##########
 sun_tilt = 20.0  # degrees from horizontal
-sun_rotation = 315.0  # degrees CW from North
+sun_rotation = 315.0  # degrees clockwise from North
 sun_intensity = 0.5  # sun intensity
 sun_strength = 1.0  # sun strength
 
 ########## landscape representation ###########
-min_res = 4000  # minimum resolution of the heightmap
-number_of_subdivisions = 2000  # number of subdivisions, more increases the detail
+min_res = 4000  # minimum resolution of the heightmap, larger value increases detail but takes longer to render
+number_of_subdivisions = 2000  # number of subdivisions, larger value increases detail but takes longer to render
 exaggeration = 5.0  # vertical exaggeration
 displacement_method = "DISPLACEMENT"  # "BOTH" #for more exaggerated shadows
 
 ########## render settings ##########
-res_x = 2000  # x resolution of the render
-res_y = 1500  # y resolution of the render
-samples = 10  # number of samples that decides how "good" the render looks. more is better but takes longer
+res_x = 2000  # x resolution of the render, larger value increases detail but takes longer to render
+res_y = 1500  # y resolution of the render, larger value increases detail but takes longer to render
+samples = 10  # number of samples that decides how "good" the render looks, larger value increases detail but takes longer to render

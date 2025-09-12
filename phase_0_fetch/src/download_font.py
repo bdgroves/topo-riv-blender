@@ -4,6 +4,22 @@ import re
 
 
 def download_google_font(font_name, output_dir="fonts", new_font_name=None):
+    """Download Google font file
+
+    Parameters
+    ----------
+    font_name: str
+        name of google font
+    output_dir: str
+        directory to save font in
+    new_font_name: str
+        optional name of google font
+
+    Returns
+    -------
+    none
+
+    """
     # Create the output directory if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)

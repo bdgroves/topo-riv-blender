@@ -12,7 +12,7 @@ def wbd_download(huc_list, extent_shpfile):
     huc_list: list of strings
         strings of the huc ids to download
     extent_shpfile: string
-        path of of the extent shapefile to be outputted
+        path of the extent shapefile to be outputted
 
     Returns
     -------

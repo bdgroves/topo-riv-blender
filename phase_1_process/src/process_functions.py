@@ -10,8 +10,11 @@ from astropy.convolution import Gaussian2DKernel, convolve
 
 from phase_0_fetch.src.download_dem import get_shapefile_extent
 
+gdal.UseExceptions()
+
+
 def get_raster_extent(dataset):
-    """Gets a extent coodinates of the raster image
+    """Gets extent coodinates of the raster image
 
     Parameters
     ----------
@@ -44,9 +47,9 @@ def get_raster_extent(dataset):
 
 
 def clean_border(ax, west, east, south, north, edgecolor, linewidth, crs):
-    """Adds a black line around the extent to remove anomalous values from edge. 
-    Beacuse matplotlib saves the texture and height maps are images, the data 
-    shape and image pixel shape may not fully line up. This causes there to be a 
+    """Adds a black line around the extent to remove anomalous values from edge.
+    Because matplotlib saves the texture and height maps as images, the data
+    shape and image pixel shape may not fully line up. This causes there to be a
     white line on the border of the images. This function cleans that up.
 
     Parameters
@@ -81,8 +84,8 @@ def clean_border(ax, west, east, south, north, edgecolor, linewidth, crs):
         geometry=[
             Polygon(
                 zip(
-                    [west, west, east, east],
-                    [north, south, south, north],
+                    [west, west, east, east, west],
+                    [north, south, south, north, north],
                 )
             )
         ],
@@ -90,7 +93,12 @@ def clean_border(ax, west, east, south, north, edgecolor, linewidth, crs):
 
     # Plot this as a line around the extent
     clean_polygon.plot(
-        ax=ax, facecolor="none", edgecolor=edgecolor, linewidth=linewidth, zorder=1000
+        ax=ax,
+        facecolor="none",
+        edgecolor=edgecolor,
+        linewidth=linewidth,
+        capstyle="round",
+        zorder=1000,
     )
 
 
@@ -160,7 +168,7 @@ def project(file, map_crs, tmp_dir):
     file: string
         path of geotiff
     map_crs: string
-        coordiante reference system to use for the maps
+        coordinate reference system to use for the maps
     tmp_dir: string
         path of the tmp directory
 
@@ -190,7 +198,7 @@ def project(file, map_crs, tmp_dir):
         dstSRS=map_crs,
         resampleAlg="bilinear",
     )
-    
+
     # Read in the projected data as a numpy array
     proj_array = np.array(proj_ds.GetRasterBand(1).ReadAsArray())
 
@@ -207,7 +215,7 @@ def project(file, map_crs, tmp_dir):
         min_array = np.nanmin(proj_array)
         max_array = np.nanmax(proj_array)
 
-    return proj_array, proj_ds, min_array, max_array
+    return proj_array, proj_ds, min_array, max_array, NaN
 
 
 def contour(ds, dem, coarsen, stddev):
@@ -216,7 +224,7 @@ def contour(ds, dem, coarsen, stddev):
     Parameters
     ----------
     ds: gdal dataset
-        gdal datset holding the dem
+        gdal dataset holding the dem
     dem: numpy array
         dem values in numpy array
     coarsen: float
@@ -237,7 +245,6 @@ def contour(ds, dem, coarsen, stddev):
     # Make a spatial grid for the raster
     rast_x = np.linspace(rast_extent[0], rast_extent[1], dem.shape[1])
     rast_y = np.linspace(rast_extent[3], rast_extent[2], dem.shape[0])
-    rast_Y, rast_X = np.meshgrid(rast_y, rast_x, indexing="ij")
 
     # Initialize the interpolator
     interpol = RegularGridInterpolator((rast_y, rast_x), dem, method="linear")
@@ -255,7 +262,8 @@ def contour(ds, dem, coarsen, stddev):
 
     return astropy_conv
 
-def make_labels_file(labels_shpfile,labels_file,extent, map_crs):
+
+def make_labels_file(labels_shpfile, labels_file, extent, map_crs):
     """Sets up labels file for rendering.
 
     Parameters
@@ -272,27 +280,32 @@ def make_labels_file(labels_shpfile,labels_file,extent, map_crs):
     Returns
     -------
     none
-    
+
     """
-    
+
     # Load labels shapefile
     labels_shp = gpd.read_file(labels_shpfile).to_crs(map_crs)
 
-    labels = [[-9999.,-9999.,""] for i in range(0,len(labels_shp))]
+    labels = [[-9999.0, -9999.0, ""] for i in range(0, len(labels_shp))]
 
-    for i in range(0,len(labels_shp)):
-        labels[i] = [(labels_shp.geometry[i].x - 0.5 * (extent[0] + extent[1])) / (extent[1] - extent[0]),
-                     (labels_shp.geometry[i].y - 0.5 * (extent[2] + extent[3])) / (extent[3] - extent[2]),
-                     labels_shp["labels"][i],
-                     labels_shp["p_colors"][i],
-                     labels_shp["l_colors"][i]]
+    for i in range(0, len(labels_shp)):
+        labels[i] = [
+            (labels_shp.geometry[i].x - 0.5 * (extent[0] + extent[1]))
+            / (extent[1] - extent[0]),
+            (labels_shp.geometry[i].y - 0.5 * (extent[2] + extent[3]))
+            / (extent[3] - extent[2]),
+            labels_shp["labels"][i],
+            labels_shp["p_colors"][i],
+            labels_shp["l_colors"][i],
+        ]
 
     # Write the 2D list to a CSV file
-    with open(labels_file, mode='w', newline='') as file:
+    with open(labels_file, mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(labels)
 
-def make_custom_cmap(cstops,nstops):
+
+def make_custom_cmap(cstops, nstops):
     """Creates a custom matplotlib cmap based on color stops. Defaults to evenly spaced color stops unless specified otherwise.
 
     Parameters
@@ -310,20 +323,55 @@ def make_custom_cmap(cstops,nstops):
     -------
     cmap: matplotlib cmap
         the custom matplotlib color map
-    
+
     """
     # make evently spaced n stops if not specified
     if nstops == []:
         number_of_stops = len(cstops)
-        nstops = [int(256.0*float(i)/float(number_of_stops-1)) for i in range(0,number_of_stops)]
+        nstops = [
+            int(256.0 * float(i) / float(number_of_stops - 1))
+            for i in range(0, number_of_stops)
+        ]
 
     # create empty color ramp
     vals = np.ones((256, 4))
 
     # linearly interpolate between color stops
-    for i in range (0,3):
-        for j in range(1,len(cstops)):
-            vals[nstops[j-1]:nstops[j], i] = np.linspace(cstops[j-1][i]/255., cstops[j][i]/255., int(nstops[j]-nstops[j-1]))
+    for i in range(0, 3):
+        for j in range(1, len(cstops)):
+            vals[nstops[j - 1] : nstops[j], i] = np.linspace(
+                cstops[j - 1][i] / 255.0,
+                cstops[j][i] / 255.0,
+                int(nstops[j] - nstops[j - 1]),
+            )
 
     # return the matplotlib colormap
     return mcolors.ListedColormap(vals)
+
+
+def truncate_colormap(cmap_name, minval=0.0, maxval=1.0, n=256):
+    """Truncates a named matplotlib colormap. Adapted from https://stackoverflow.com/questions/18926031/how-to-extract-a-subset-of-a-colormap-as-a-new-colormap-in-matplotlib
+
+    Parameters
+    ----------
+    cmap: string
+        matplotlib colormap name
+    minval: float
+        min val of cmap
+    maxval: float
+        max val of cmap
+    n: integer
+        number of stops in cmap
+
+    Returns
+    -------
+    new_cmap: matplotlib cmap
+        the custom matplotlib colormap
+
+    """
+    cmap = plt.get_cmap(cmap_name)
+    new_cmap = mcolors.LinearSegmentedColormap.from_list(
+        "trunc({n},{a:.2f},{b:.2f})".format(n=cmap_name, a=minval, b=maxval),
+        cmap(np.linspace(minval, maxval, n)),
+    )
+    return new_cmap
