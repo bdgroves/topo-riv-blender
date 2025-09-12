@@ -18,8 +18,8 @@ rule all:
 # Make the bounding box
 rule make_bounding_box:
     params:
-        UL_corner = (UL_corner_specify[0], UL_corner_specify[1]),
-        LR_corner = (UL_corner_specify[0]-square, UL_corner_specify[1]+square*aspect),
+        UL_corner =[UL_corner_specify[0], UL_corner_specify[1]],
+        LR_corner = [UL_corner_specify[0]-square, UL_corner_specify[1]+square*aspect],
     output:
         extent_shpfile = "phase_0_fetch/out/{name}/extent.shp"
     script:

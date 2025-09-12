@@ -287,16 +287,16 @@ A parameters file is saved in the `blender_parameters` folder and contains many 
 - If you like these example workflows but want a different location, you can easily adjust them! Inside these Snakefiles (e.g., `Snakefile_contour`), you will see:
 
 ```python
-UL_corner = (45.85, -121.65),
-LR_corner = (45.50, -121.19),
+UL_corner = [45.85, -121.65],
+LR_corner = [45.50, -121.19],
 ```
 
 - These are the upper left corner (`UL_corner`) and lower right corner (`LR_corner`) coordinates (latitude, lontitude in decimal degrees). A simple way to find the location is to use [Google Maps](https://www.google.com/maps).
 - Simply right-click a point, copy the coordinates in the context menu, and paste them between the brackets.
 
 ```python
-UL_corner = (40.33, -77.75),
-LR_corner = (40.11, -77.43),
+UL_corner = [40.33, -77.75],
+LR_corner = [40.11, -77.43],
 ```
 
 - Next, you'll want to change the output filename in the `rule all`:
