@@ -1,0 +1,56 @@
+[project]
+name = "topo-riv-blender"
+version = "0.1.0"
+description = "Reproducible pipeline for 3D topography/hydrography renders in Blender"
+channels = ["conda-forge","bioconda"]
+platforms = ["win-64"]
+
+[dependencies]
+python = "3.11.*"
+gdal = "*"
+geopandas = "*"
+rasterio = "*"
+rioxarray = "*"
+xarray = "*"
+pyproj = "*"
+shapely = "*"
+fiona = "*"
+numpy = "*"
+pandas = "*"
+scipy = "*"
+matplotlib = "*"
+py3dep = "*"
+pynhd = "*"
+pygeohydro = "*"
+pygeoogc = "*"
+pydaymet = "*"
+pystac-client = "*"
+stackstac = "*"
+requests = "*"
+tqdm = "*"
+pip = "*"
+
+snakemake-minimal = "7.*"
+bmi-topography = ">=0.9.0,<0.10"
+pyogrio = ">=0.11.0,<0.12"
+astropy = ">=7.1.0,<8"
+scikit-image = ">=0.25.2,<0.26"
+
+[activation.env]
+# Safety net in case the shim isn't used somewhere:
+BLENDER_BIN = 'C:\Program Files\Blender Foundation\Blender 4.5\blender.exe'
+# If GDAL/PROJ complain on Windows, uncomment:
+PROJ_DATA = "{prefix}/Library/share/proj"
+GDAL_DATA = "{prefix}/Library/share/gdal"
+
+[tasks]
+render_demo   = "snakemake --cores 1 -s Snakefile phase_2_visualize/out/render_02050302.png"
+render_all    = "snakemake --cores 1 -s Snakefile"
+render_aerial = "snakemake --cores 1 -s Snakefile_aerial"
+render_global = "snakemake --cores 1 -s Snakefile_global"
+render_contour= "snakemake --cores 1 -s Snakefile_contour"
+render_lake   = "snakemake --cores 1 -s Snakefile_lake"
+render_thumb  = "snakemake --cores 1 -s Snakefile_thumbnail"
+
+
+

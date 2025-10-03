@@ -16,10 +16,11 @@ buffer = 1.0  # percent buffer space around watershed
 background_color = [0.5, 0.5, 0.5, 1.0]  # rgba color of the background
 wall_color = [0.2, 0.133, 0.0667, 1.0]  # rgba color of the wall edge
 river_color = [0.1294, 0.2275, 0.3608, 1.0]  # rgba color of the rivers
-topo_cmap = "copper"  # color map of the topography, choose others here: https://matplotlib.org/stable/users/explain/colors/colormaps.html
+topo_cmap = "grey"
+ # color map of the topography, choose others here: https://matplotlib.org/stable/users/explain/colors/colormaps.html
 
 ########## render hardware ##########
-GPU_boolean = False  # if you have a GPU, set this to 1 and this will run faster
+GPU_boolean = False
 
 ########## blender scene ##########
 # max dimension of plane
@@ -66,12 +67,12 @@ sun_intensity = 0.5  # sun intensity, use small increments like 0.1 to adjust
 sun_strength = 1.0  # sun strength, use small increments like 0.1 to adjust
 
 ########## landscape representation ###########
-min_res = 2000  # minimum resolution of the heightmap, larger value increases detail but takes longer to render
-number_of_subdivisions = 2000  # number of subdivisions, larger value increases detail but takes longer to render
+min_res = 1024
+number_of_subdivisions = 256
 exaggeration = "auto"  # vertical exaggeration
-displacement_method = "DISPLACEMENT"  # "BOTH" #for more exaggerated shadows
+displacement_method = "BUMP"
 
 ########## render settings ##########
-res_x = 2000  # x resolution of the render, larger value increases detail but takes longer to render
-res_y = 2000  # y resolution of the render, larger value increases detail but takes longer to render
-samples = 10  # number of samples that decides how "good" the render looks, larger value increases detail but takes longer to render
+res_x = 1600
+res_y = 900
+samples = 32
